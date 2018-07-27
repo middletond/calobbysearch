@@ -33,16 +33,16 @@ def search(request, format=None):
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
     try:
         acts = Activity.objects.search(**params)
-        pager = paginated(acts, request)
-        serializer = ActivitySerializer(pager.page, many=True)
+        pager, page = paginated(acts, request)
+        serializer = ActivitySerializer(page, many=True)
         return pager.get_paginated_response(serializer.data)
-        # return Response(serializer.data)
     except ValueError as error:
         return Response(str(error), status=status.HTTP_400_BAD_REQUEST)
 
 
+# refactor this into something better.
 def paginated(queryset, request):
     paginator = PageNumberPagination()
-    paginator.page_size = 2
+    paginator.page_size = 100
     paginator.paginate_queryset(queryset, request)
-    return paginator
+    return (paginator, paginator.page)

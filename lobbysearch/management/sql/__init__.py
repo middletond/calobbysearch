@@ -1,4 +1,6 @@
-from .load_employer_activities import LOAD_EMPLOYER_ACTIVITIES
 from .load_lobbyer_activities import LOAD_LOBBYER_ACTIVITIES
+from .load_employer_activities_firms import LOAD_EMPLOYER_ACTIVITIES_FIRMS
+from .load_employer_activities_inhouse import LOAD_EMPLOYER_ACTIVITIES_INHOUSE
+from .load_employer_activities_other import LOAD_EMPLOYER_ACTIVITIES_OTHER
 
 from .utils import inserted_rows

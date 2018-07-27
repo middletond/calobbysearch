@@ -14,6 +14,12 @@ ENTITY_CODE_CHOICES = (
     ("FRM", "Lobby Firm"),
 )
 
+ACTIVITY_TYPE_CHOICES = (
+    ("inhouse", "In-house Lobbying"),
+    ("firm", "Contracted Lobby Firm"),
+    ("other", "Other Payments to Influence"),
+)
+
 class Activity(models.Model):
     """An amalgamated lobby activity report for one quarter (3 months).
 
@@ -194,6 +200,13 @@ class Activity(models.Model):
         db_column="employer_phone",
     )
     # Activity
+    type = models.CharField(
+        max_length=10,
+        choices=ACTIVITY_TYPE_CHOICES,
+        blank=True,
+        null=True,
+        db_column="type",
+    )
     start_date = models.DateField(
         null=True,
         db_column="start_date",
@@ -241,7 +254,7 @@ class Activity(models.Model):
     objects = ActivityQuerySet.as_manager()
 
     class Meta:
-        ordering = ("-filing_id", "-amendment_id")
+        ordering = ("-filing_id", "-amendment_id", "type", "-period_total",)
 
     @property
     def employer(self):

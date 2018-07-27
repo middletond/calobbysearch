@@ -1,6 +1,6 @@
 # Load lobbyer activity filings (F625)
 LOAD_LOBBYER_ACTIVITIES = """
-INSERT INTO lobbysearch_activity (filing_id, amendment_id, form_type, entity_code, filer_id, filer_name, filer_last_name, filer_first_name, lobbyer_id, lobbyer_name, lobbyer_last_name, lobbyer_first_name, lobbyer_city, lobbyer_state, lobbyer_zip, lobbyer_phone, filing_date, start_date, end_date, transaction_id, employer_name, employer_last_name, employer_first_name, employer_city, employer_state, employer_zip, employer_phone, interests, compensation, reimbursement, period_total, session_total, involved_entities)
+INSERT INTO lobbysearch_activity (filing_id, amendment_id, form_type, entity_code, filer_id, filer_name, filer_last_name, filer_first_name, lobbyer_id, lobbyer_name, lobbyer_last_name, lobbyer_first_name, lobbyer_city, lobbyer_state, lobbyer_zip, lobbyer_phone, filing_date, start_date, end_date, transaction_id, employer_name, employer_last_name, employer_first_name, employer_city, employer_state, employer_zip, employer_phone, type, interests, compensation, reimbursement, period_total, session_total, involved_entities)
 SELECT
   covers."FILING_ID" AS filing_id,
   CAST (covers."AMEND_ID" AS INTEGER) AS amendment_id,
@@ -29,6 +29,7 @@ SELECT
   payments."EMPLR_ST" AS employer_state,
   payments."EMPLR_ZIP4" AS employer_zip,
   payments."EMPLR_PHON" AS employer_phone,
+  'firm' AS type,
   payments."LBY_ACTVTY" AS interests,
   payments."FEES_AMT" AS compensation,
   payments."REIMB_AMT" AS reimbursement,

@@ -32,6 +32,7 @@ class ActivitySerializer(serializers.ModelSerializer):
             "employer_state",
             "employer_zip",
             "employer_phone",
+            "type",
             "start_date",
             "end_date",
             "interests",

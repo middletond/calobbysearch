@@ -23,23 +23,39 @@ class Command(BaseCommand):
             self.output("Done. All cleared.")
             self.output("")
 
-            self.output("Loading activities filed by lobbyers from CAL-ACCESS tables...")
+            self.output("Loading activities filed by lobby firms from CAL-ACCESS tables...")
             cursor.execute(sql.LOAD_LOBBYER_ACTIVITIES)
 
-            lobbyers_inserted = sql.inserted_rows(cursor)
-            insert_count += lobbyers_inserted
-            self.output("Done. {} lobbyer activities loaded.".format(lobbyers_inserted))
+            acts_inserted = sql.inserted_rows(cursor)
+            insert_count += acts_inserted
+            self.output("Done. {} new activities loaded.".format(acts_inserted))
             self.output("")
 
-            self.output("Loading activities filed by employers from CAL-ACCESS tables...")
-            cursor.execute(sql.LOAD_EMPLOYER_ACTIVITIES)
+            self.output("Loading contracted-firm activities filed by employers from CAL-ACCESS tables...")
+            cursor.execute(sql.LOAD_EMPLOYER_ACTIVITIES_FIRMS)
 
-            employers_inserted = sql.inserted_rows(cursor)
-            insert_count += employers_inserted
-            self.output("Done. {} employer activities loaded.".format(employers_inserted))
+            acts_inserted = sql.inserted_rows(cursor)
+            insert_count += acts_inserted
+            self.output("Done. {} new activities loaded.".format(acts_inserted))
+            self.output("")
+
+            self.output("Loading in-house activities filed by employers from CAL-ACCESS tables...")
+            cursor.execute(sql.LOAD_EMPLOYER_ACTIVITIES_INHOUSE)
+
+            acts_inserted = sql.inserted_rows(cursor)
+            insert_count += acts_inserted
+            self.output("Done. {} new activities loaded.".format(acts_inserted))
+            self.output("")
+
+            self.output("Loading other pay-to-influence activities filed by employers from CAL-ACCESS tables...")
+            cursor.execute(sql.LOAD_EMPLOYER_ACTIVITIES_OTHER)
+
+            acts_inserted = sql.inserted_rows(cursor)
+            insert_count += acts_inserted
+            self.output("Done. {} new activities loaded.".format(acts_inserted))
             self.output("")
 
         if insert_count:
-            self.output("Complete. {} total activities loaded.".format(insert_count))
+            self.output("Loading complete! {} total activities loaded.".format(insert_count))
         else:
             self.output_error("WARNING: no new activities were loaded.")
