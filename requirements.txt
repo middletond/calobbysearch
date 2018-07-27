@@ -1,0 +1,21 @@
+# core
+django
+
+#dev
+django-debug-toolbar
+
+# api
+django-rest-framework
+
+# database
+psycopg2-binary
+
+# calaccess / cdcc
+django-calaccess-raw-data
+django-postgres-copy
+
+# utils
+python-dateutil
+
+# awesome
+ipython

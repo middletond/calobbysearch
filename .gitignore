@@ -1,0 +1,15 @@
+### Ignore compiled python files ###
+__pycache__
+*.pyc
+
+### Ignore virtual env ###
+venv
+
+### Ignore Mac system files ###
+.DS_Store
+
+### Ignore local settings files ###
+local_settings.py
+
+### Ignore imported CAL-ACCESS data
+data/
