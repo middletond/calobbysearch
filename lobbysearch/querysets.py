@@ -10,7 +10,7 @@ class ActivityQuerySet(models.QuerySet):
     """Acting manager for `Activity` model."""
 
     def search(self, interest=None, company=None, bill=None,
-                     start=None, end=None, session=None):
+               start=None, end=None, session=None, latest_only=True):
         # default to latest session if no date params
         if not(start or end or session):
             start, end = Session().as_dates()
@@ -25,6 +25,8 @@ class ActivityQuerySet(models.QuerySet):
             acts = acts.with_company(company)
         if bill:
             acts = acts.with_bill(bill)
+        if latest_only:
+            acts = acts.latest_only()
         return acts
 
     def with_interest(self, query):
@@ -43,6 +45,9 @@ class ActivityQuerySet(models.QuerySet):
         if not end:
             end = dates.today()
         return self.between(start, end)
+
+    def latest_only(self):
+        return self.distinct("filing_id")
 
     # Dates and Times
     def between(self, start, end, field=None):

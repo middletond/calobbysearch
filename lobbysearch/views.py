@@ -25,6 +25,8 @@ def search(request, format=None):
         "session": request.GET.get("session", None),
         "start": request.GET.get("start", None),
         "end": request.GET.get("end", None),
+        # meta
+        "latest_only": True if int(request.GET.get("latest_only", True)) else False
     }
     text_queries = {key: params[key] for key in TEXT_QUERIES if params[key]}
     if not text_queries:
