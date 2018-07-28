@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "calaccess_raw",
     # app
     "lobbysearch",
+    "bills",
 ]
 
 MIDDLEWARE = [

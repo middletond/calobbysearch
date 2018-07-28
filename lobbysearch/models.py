@@ -267,48 +267,5 @@ class Activity(models.Model):
         return self.involved_entities
 
 
-
 # class Registration(models.Model):
 #     pass
-
-
-# class Bill(models.Model):
-#     """A bill to be lobbied, parsed from `Activity.interest` fields. """
-#     type = models.CharField(
-#         max_length=4,
-#         choices=BILL_TYPE_CHOICES,
-#     )
-#     number = models.IntegerField(
-#
-#     )
-#     title = models.CharField(
-#         max_length=250,
-#         blank=True,
-#         null=True,
-#     )
-#     name = models.CharField( # "{TYPE} {NUMBER}", for searching
-#         max_length=10,
-#         blank=True,
-#         null=True,
-#     )
-#     full_name = models.CharField( # "{TYPE} {NUMBER} {TITLE}", for searching
-#         max_length=300,
-#         blank=True,
-#         null=True,
-#     )
-#     description = models.TextField( # latest scraped bill analysis?
-#         blank=True,
-#         null=True,
-#     )
-#     text = models.TextField( # offical text -- also requires scraping
-#         blank=True,
-#         null=True,
-#     )
-#     session = models.CharField(
-#         choices=SESSION_CHOICES,
-#     )
-#
-#     def save(self, *args, **kwargs):
-#         if not self.name:
-#             self.name = "{0} {1} {2}".format(self.type, self.number, self.title)
-#         super(self, Bill).save(*args, **kwargs)

@@ -1,6 +1,7 @@
 from . import dates
 
 SESSION_STRING_FORMAT = "{}{}"; # ex: "20172018"
+EARLIEST_YEAR = 1999
 
 class Session:
     """Small helper class to handle legislative sessions."""
@@ -36,3 +37,9 @@ class Session:
             start = current_year # odd year, ex: 2017 -> 2017-2018 session
             end = current_year + 1
         return Session.string_from_dates(start, end)
+
+    @staticmethod
+    def available_choices():
+        return (
+            ("20172018", "2017 - 2018"),
+        )
