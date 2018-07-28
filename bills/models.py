@@ -1,6 +1,6 @@
 from django.db import models
 
-from .manager import BillQuerySet
+from .managers import BillQuerySet
 
 from utils.session import Session
 
