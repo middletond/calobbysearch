@@ -41,7 +41,11 @@ SELECT
 FROM
   "CVR_LOBBY_DISCLOSURE_CD" covers
 INNER JOIN
-  "SMRY_CD" summary ON summary."FILING_ID" = covers."FILING_ID"
+  "SMRY_CD" summary
+    ON
+      summary."FILING_ID" = covers."FILING_ID"
+    AND
+      summary."AMEND_ID" = covers."AMEND_ID"
 WHERE
   covers."FORM_TYPE" = 'F635'
 AND

@@ -41,7 +41,11 @@ SELECT
 FROM
   "CVR_LOBBY_DISCLOSURE_CD" covers
 INNER JOIN
-  "LPAY_CD" payments ON payments."FILING_ID" = covers."FILING_ID"
+  "LPAY_CD" payments
+    ON
+      payments."FILING_ID" = covers."FILING_ID"
+    AND
+      payments."AMEND_ID" = covers."AMEND_ID"
 WHERE
   covers."FORM_TYPE" = 'F635'
 ORDER BY
