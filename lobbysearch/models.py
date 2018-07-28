@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
-from .querysets import ActivityQuerySet
+from .manager import ActivityQuerySet
 
 ACTIVITY_FORM_TYPE_CHOICES = (
     ("F625", "F625"),

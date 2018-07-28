@@ -1,5 +1,7 @@
 from django.db import models
 
+from .manager import BillQuerySet
+
 from utils.session import Session
 
 # http://www.csun.edu/~hfdss003/atacp/supplements/fph1.html#link4
@@ -89,6 +91,7 @@ class Bill(models.Model):
         max_length=8,
         choices=SESSION_CHOICES,
     )
+    objects = BillQuerySet.as_manager()
 
     def save(self, *args, **kwargs):
         if not self.name:
