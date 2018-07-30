@@ -106,9 +106,18 @@ class Bill(models.Model):
         blank=True,
         null=True,
     )
+    normalized = models.BooleanField(
+        default=False,
+    )
     objects = BillQuerySet.as_manager()
 
-    def save(self, *args, **kwargs):
+    def __unicode__(self):
+        return "{} {}".format(self.session, self.name)
+
+    def __str__(self):
+        return str(self.__unicode__())
+
+    def normalize(self):
         self.name = parse_one(self.name) # coerce to correct format
         if not self.type:
             self.type = parse_type(self.name)
@@ -118,4 +127,10 @@ class Bill(models.Model):
             self.title = self.title[:TITLE_MAX_LENGTH]
         if not self.full_name:
             self.full_name = "{0} {1} {2}".format(self.type, self.number, self.title)
+        self.normalized = True
+        return self
+
+    def save(self, *args, **kwargs):
+        if not self.normalized:
+            self.normalize()
         super(Bill, self).save(*args, **kwargs)

@@ -12,10 +12,12 @@ class BillQuerySet(models.QuerySet):
     def load(self, records=[], clear_existing=True):
         """Load bills by passed records, else by scraping leginfo website."""
         if not records: records = self.fetch()
-        
+
         if records and clear_existing:
             self.all().delete()
-        return [self.create(**rec) for rec in records]
+        # `bulk_create` doesn't call `save` so we normalize explicitly here
+        bills = [self.model(**rec).normalize() for rec in records]
+        return self.bulk_create(bills)
 
     def connect(self):
         """Connect bills to lobbysearch by parsing activity interests."""
