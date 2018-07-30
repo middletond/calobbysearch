@@ -1,8 +1,7 @@
 import requests
 import re
 
-from lxml import etree
-from lxml import html
+from lxml import etree, html
 
 
 XML_NAMESPACE_ATTRS = r'xmlns\=\"[^\"]+\"|xmlns\:[a-z]+\=\"[^\"]+\"|(?<=\s)[a-z]+\:'
@@ -13,10 +12,10 @@ def tree_from_page(page, tree_type=None):
     if hasattr(page, "tree"):
         return page.tree
     else:
-        if hasattr(page, "page_source"): # web page
+        if hasattr(page, "page_source"): # browser object
             page = page.page_source
         if isinstance(page, requests.models.Response): # requests object
-            page = page.text
+            page = page.content
 
     if not tree_type:
         html_elems = html.fromstring(page).find('.//*')
