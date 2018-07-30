@@ -17,5 +17,11 @@ django-postgres-copy
 # utils
 python-dateutil
 
+# http
+requests
+selenium
+pyvirtualdisplay
+lxml
+
 # awesome
 ipython
