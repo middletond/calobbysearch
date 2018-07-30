@@ -3,6 +3,8 @@ from . import dates
 SESSION_STRING_FORMAT = "{}{}"; # ex: "20172018"
 EARLIEST_YEAR = 1999
 
+YEAR_ONLY_FORMAT = "%Y"
+
 class Session:
     """Small helper class to handle legislative sessions."""
     def __init__(self, sesh_string=None):
@@ -24,7 +26,15 @@ class Session:
         return Session.string_from_dates(*self.as_years())
 
     @staticmethod
-    def string_from_dates(start, end):
+    def string_from_dates(start_date, end_date):
+        year1 = int(dates.format(start_date, YEAR_ONLY_FORMAT))
+        year2 = int(dates.format(end_date, YEAR_ONLY_FORMAT))
+        if year1 % 2 == 0: # even year, ex: 2018 -> 2017-2018 session
+            start = year1 - 1
+            end = year1
+        else:
+            start = year1 # odd year, ex: 2017 -> 2017-2018 session
+            end = year1 + 1
         return SESSION_STRING_FORMAT.format(start, end)
 
     @staticmethod

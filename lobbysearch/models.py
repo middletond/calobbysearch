@@ -4,6 +4,8 @@ from django.db import models
 
 from .managers import ActivityQuerySet
 
+from utils.session import Session
+
 ACTIVITY_FORM_TYPE_CHOICES = (
     ("F625", "F625"),
     ("F635", "F635")
@@ -256,6 +258,18 @@ class Activity(models.Model):
     class Meta:
         ordering = ("-filing_id", "-amendment_id", "type", "-period_total",)
 
+    def __unicode__(self):
+        return "({} - {}) {} ->{}-> {}".format(
+            self.start_date.strftime("%m/%Y"),
+            self.end_date.strftime("%m/%Y"),
+            self.employer.strip(),
+            self.period_total,
+            self.lobbyer.strip(),
+        )
+
+    def __str__(self):
+        return str(self.__unicode__())
+
     @property
     def employer(self):
         return self.employer_name
@@ -265,6 +279,9 @@ class Activity(models.Model):
     @property
     def entities(self):
         return self.involved_entities
+    @property
+    def session(self):
+        return Session.string_from_dates(self.start_date, self.end_date)
 
 
 # class Registration(models.Model):
