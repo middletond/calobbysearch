@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
+from bills import parser
+from bills.models import Bill
 from .managers import ActivityQuerySet
 
 from utils.session import Session
@@ -223,6 +225,11 @@ class Activity(models.Model):
         null=True,
         db_column="interests",
     )
+    bills = models.ManyToManyField(
+        Bill,
+        blank=True,
+        related_name="activities",
+    )
     compensation = models.DecimalField(
         decimal_places=2,
         max_digits=14,
@@ -281,8 +288,15 @@ class Activity(models.Model):
         return self.involved_entities
     @property
     def session(self):
-        return Session.string_from_dates(self.start_date, self.end_date)
+        return Session.string_from_date(self.start_date)
 
+    def find_related_bills(self):
+        """Return bills based on parsed interest field."""
+        bill_names = parser.parse(self.interests)
+        return Bill.objects.filter(
+            session=self.session,
+            name__in=bill_names,
+        )
 
 # class Registration(models.Model):
 #     pass

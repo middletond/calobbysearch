@@ -1,8 +1,10 @@
 from django.db import models
 
+# from lobbysearch.models import Activity
 from scrape import leginfo
+from . import parser
 
-class BillQuerySet(models.QuerySet):
+class BillManager(models.Manager):
     """Acting manager for `Bill` model."""
 
     def fetch(self):
@@ -18,7 +20,3 @@ class BillQuerySet(models.QuerySet):
         # `bulk_create` doesn't call `save` so we normalize explicitly here
         bills = [self.model(**rec).normalize() for rec in records]
         return self.bulk_create(bills)
-
-    def connect(self):
-        """Connect bills to lobbysearch by parsing activity interests."""
-        pass

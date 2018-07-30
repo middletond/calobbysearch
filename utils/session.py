@@ -43,9 +43,9 @@ class Session:
 
     @staticmethod
     def available_sessions():
-        start, end = EARLIEST_YEAR, Session.current_year()
-        increment = 2
-        return tuple(Session.string_from_date(year) for year in range(start, end, increment))
+        start, end, increment = EARLIEST_YEAR, Session.current_year(), 2
+        sesh_years = range(end, start, -increment) # DESC order
+        return tuple(Session.string_from_date(year) for year in sesh_years)
 
     @staticmethod
     def available_choices():

@@ -1,6 +1,6 @@
 from django.db import models
 
-from .managers import BillQuerySet
+from .managers import BillManager
 from .parser import parse_type, parse_number, parse_one
 
 from utils.session import Session
@@ -109,7 +109,8 @@ class Bill(models.Model):
     normalized = models.BooleanField(
         default=False,
     )
-    objects = BillQuerySet.as_manager()
+
+    objects = BillManager()
 
     def __unicode__(self):
         return "{} {}".format(self.session, self.name)
