@@ -1,6 +1,7 @@
 from django.db import models
 
 from .managers import BillQuerySet
+from .parser import parse_type, parse_number, parse_one
 
 from utils.session import Session
 
@@ -22,6 +23,8 @@ BILL_TYPE_CHOICES = (
 
 SESSION_CHOICES = Session.available_choices()
 
+TITLE_MAX_LENGTH = 250
+
 class Bill(models.Model):
     """A bill to be lobbied from the California legislature.
 
@@ -36,10 +39,11 @@ class Bill(models.Model):
         choices=BILL_TYPE_CHOICES,
     )
     number = models.IntegerField(
-
+        blank=True,
+        null=True,
     )
     title = models.CharField(
-        max_length=250,
+        max_length=TITLE_MAX_LENGTH,
         blank=True,
         null=True,
     )
@@ -91,9 +95,27 @@ class Bill(models.Model):
         max_length=8,
         choices=SESSION_CHOICES,
     )
+    # metadata
+    url = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+    )
+    status = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+    )
     objects = BillQuerySet.as_manager()
 
     def save(self, *args, **kwargs):
-        if not self.name:
-            self.name = "{0} {1} {2}".format(self.type, self.number, self.title)
-        super(self, Bill).save(*args, **kwargs)
+        self.name = parse_one(self.name) # coerce to correct format
+        if not self.type:
+            self.type = parse_type(self.name)
+        if not self.number:
+            self.number = parse_number(self.name)
+        if len(self.title) > TITLE_MAX_LENGTH:
+            self.title = self.title[:TITLE_MAX_LENGTH]
+        if not self.full_name:
+            self.full_name = "{0} {1} {2}".format(self.type, self.number, self.title)
+        super(Bill, self).save(*args, **kwargs)

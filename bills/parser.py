@@ -13,6 +13,7 @@ BILL_NAME_FORMAT = "{} {}"
 # what they are *supposed* to use as a format.
 SINGLE_BILL_PATTERN = r"AB\s?\d{1,4}" # "AB 1001", "SB 2"
 BILL_NUMBER_PATTERN = r"(?<=[^\d])\d{1,4}\b"
+BILL_TYPE_PATTERN = r"({})".format("|".join(prefix for prefix in PREFIXES))
 
 # However, most common lobby activity submission format is:
 # AB 23, 345, 1, 34; ACA 34, 34, 2, 445; SB 34, 8778, etc
@@ -29,6 +30,8 @@ def clean(text):
     TO_REMOVE = (
         r"(?<=\d)(\s+)?\-(\s+)?(?=\d)", # "AB 33 - 10" is actually "AB 3310"
     )
+    if text is None:
+        text = ""
     for pattern in TO_REMOVE:
         text = re.sub(pattern, "", text)
     for pattern in TO_SINGLE_SPACE:
@@ -58,4 +61,12 @@ def parse(text, unique=True):
 
 def parse_one(text):
     bill_names = parse(text)
-    return bill_names[0] if bill_names else None
+    return bill_names[0] if bill_names else ""
+
+def parse_number(text):
+    bill_nums = re.findall(BILL_NUMBER_PATTERN, parse_one(text))
+    return int(bill_nums[0]) if bill_nums else None
+
+def parse_type(text):
+    bill_types = re.findall(BILL_TYPE_PATTERN, parse_one(text))
+    return bill_types[0] if bill_types else ""

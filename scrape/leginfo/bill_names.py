@@ -49,7 +49,7 @@ def crawl(session):
         "url": "td[1]/a/@href",
         "name": "td[1]/a/text()",
         "title": "td[2]/text()",
-        "author": "td[3]/text()",
+        "authors": "td[3]/text()",
         "status": "td[4]/text()",
     }), session)
 
