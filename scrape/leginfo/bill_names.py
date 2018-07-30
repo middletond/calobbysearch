@@ -1,21 +1,11 @@
 from utils import http, scrape
 from utils.arrays import flatten
+from utils.session import Session
 
 DOMAIN = "https://leginfo.legislature.ca.gov"
 URL = DOMAIN + "/faces/billSearchClient.xhtml"
 
-AVAILABLE_SESSIONS = (
-    "20172018",
-    "20152016",
-    "20132014",
-    "20112012",
-    "20092010",
-    "20072008",
-    "20052006",
-    "20032004",
-    "20012002",
-    "19992000",
-)
+AVAILABLE_SESSIONS = Session.available_sessions()
 
 def run():
     return flatten(crawl(session) for session in AVAILABLE_SESSIONS)

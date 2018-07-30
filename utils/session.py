@@ -1,6 +1,7 @@
 from . import dates
 
 SESSION_STRING_FORMAT = "{}{}"; # ex: "20172018"
+SESSION_STRING_FORMAT_VERBOSE = "{} - {}"
 EARLIEST_YEAR = 1999
 
 YEAR_ONLY_FORMAT = "%Y"
@@ -26,30 +27,35 @@ class Session:
         return Session.string_from_dates(*self.as_years())
 
     @staticmethod
-    def string_from_dates(start_date, end_date):
-        year1 = int(dates.format(start_date, YEAR_ONLY_FORMAT))
-        year2 = int(dates.format(end_date, YEAR_ONLY_FORMAT))
-        if year1 % 2 == 0: # even year, ex: 2018 -> 2017-2018 session
-            start = year1 - 1
-            end = year1
+    def string_from_date(date):
+        year = int(dates.format(date, YEAR_ONLY_FORMAT))
+        if year % 2 == 0: # even year, ex: 2018 -> 2017-2018 session
+            start = year - 1
+            end = year
         else:
-            start = year1 # odd year, ex: 2017 -> 2017-2018 session
-            end = year1 + 1
+            start = year # odd year, ex: 2017 -> 2017-2018 session
+            end = year + 1
         return SESSION_STRING_FORMAT.format(start, end)
 
     @staticmethod
     def current_session_string():
-        current_year = int(dates.today().strftime("%Y"))
-        if current_year % 2 == 0: # even year, ex: 2018 -> 2017-2018 session
-            start = current_year - 1
-            end = current_year
-        else:
-            start = current_year # odd year, ex: 2017 -> 2017-2018 session
-            end = current_year + 1
-        return Session.string_from_dates(start, end)
+        return Session.string_from_dates(current_year())
+
+    @staticmethod
+    def available_sessions():
+        start, end = EARLIEST_YEAR, Session.current_year()
+        increment = 2
+        return tuple(Session.string_from_date(year) for year in range(start, end, increment))
 
     @staticmethod
     def available_choices():
-        return (
-            ("20172018", "2017 - 2018"),
-        )
+        def to_choice(session):
+            session_verbose = SESSION_STRING_FORMAT_VERBOSE.format(
+                session[:4],
+                session[4:8])
+            return (session, session_verbose)
+        return tuple(to_choice(session) for session in Session.available_sessions())
+
+    @staticmethod
+    def current_year():
+        return int(dates.today().strftime(YEAR_ONLY_FORMAT))
