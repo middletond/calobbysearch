@@ -1,5 +1,7 @@
 from django.db import models
 
+from bills import parser
+
 from utils.session import Session
 from utils import dates
 
@@ -36,8 +38,12 @@ class ActivityQuerySet(models.QuerySet):
         return self.filter(involved_entities__icontains=query)
 
     def with_bill(self, query):
-        # TODO: Add bill parser logic + Bill model
-        return self.filter(interests__icontains=query)
+        # XXX: perhaps we should search Bill model directly, then grab act IDs from related?
+        bill_names = parser.parse(query)
+        if bill_names: # there are names, so search by that
+            return self.filter(bills__name__in=bill_names)
+        # else assume text / keyword query and search full names
+        return self.filter(bills__full_name__iregex="\y{}\y".format(query))
 
     def dates(self, start=None, end=None):
         if not start:

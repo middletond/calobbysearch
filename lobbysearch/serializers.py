@@ -1,8 +1,12 @@
 from rest_framework import serializers
+
+from bills.serializers import BillSerializer
 from .models import Activity
 
 
 class ActivitySerializer(serializers.ModelSerializer):
+    bills = BillSerializer(many=True, read_only=True)
+
     class Meta:
         model = Activity
         fields = (
@@ -40,4 +44,5 @@ class ActivitySerializer(serializers.ModelSerializer):
             "reimbursement",
             "period_total",
             "session_total",
+            "bills",
         )

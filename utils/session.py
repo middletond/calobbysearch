@@ -39,7 +39,8 @@ class Session:
 
     @staticmethod
     def current_session_string():
-        return Session.string_from_dates(current_year())
+        this_year = Session.current_year()
+        return Session.string_from_date(this_year)
 
     @staticmethod
     def available_sessions():

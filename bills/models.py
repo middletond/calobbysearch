@@ -113,7 +113,7 @@ class Bill(models.Model):
     objects = BillManager()
 
     def __unicode__(self):
-        return "{} {}".format(self.session, self.name)
+        return "{} {}: {}".format(self.session, self.name, self.title)
 
     def __str__(self):
         return str(self.__unicode__())
