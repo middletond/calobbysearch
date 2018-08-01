@@ -23,5 +23,10 @@ selenium
 pyvirtualdisplay
 lxml
 
+# job queue
+celery==4.1 # in 4.2 group results from redis don't return
+kombu==4.1
+redis
+
 # awesome
 ipython

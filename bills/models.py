@@ -124,6 +124,8 @@ class Bill(models.Model):
             self.type = parse_type(self.name)
         if not self.number:
             self.number = parse_number(self.name)
+        if not self.title:
+            self.title = ""
         if len(self.title) > TITLE_MAX_LENGTH:
             self.title = self.title[:TITLE_MAX_LENGTH]
         if not self.full_name:

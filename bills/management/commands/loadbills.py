@@ -2,6 +2,7 @@ import sys
 
 from django.core.management.base import BaseCommand, CommandError
 
+from lobbysearch import queue
 from bills.models import Bill
 
 class Command(BaseCommand):
@@ -14,8 +15,11 @@ class Command(BaseCommand):
         self.stdout.write(self.style.ERROR(msg))
 
     def handle(self, *args, **options):
+        clear_existing = True # make this an arg
+
         self.output("Fetching latest bill records from state website...")
-        recs = Bill.objects.fetch()
+        # recs = Bill.objects.fetch()
+        recs = queue.fetch_bills()
         if not recs:
             self.output_error("Warning. No bill records were fetched.")
             sys.exit(1)
@@ -23,7 +27,7 @@ class Command(BaseCommand):
             self.output("Done. {} records fetched.".format(len(recs)))
 
         self.output("Loading bills into app using fetched records...")
-        bills = Bill.objects.load(recs)
+        bills = Bill.objects.load(recs, clear_existing=clear_existing)
         if not bills:
             self.output_error("Warning. No new bills were created.")
             sys.exit(1)

@@ -1,6 +1,5 @@
 from django.db import models
 
-# from lobbysearch.models import Activity
 from scrape import leginfo
 from . import parser
 

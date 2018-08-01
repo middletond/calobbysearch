@@ -126,6 +126,14 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
+# Celery Queue
+RABBITMQ_PORT = 5672
+REDIS_PORT = 6379
+
+# CELERY_BROKER_URL = "amqp://guest:guest@localhost:{}".format(RABBITMQ_PORT)
+CELERY_BROKER_URL = "redis://localhost:{}".format(REDIS_PORT)
+CELERY_RESULT_BACKEND = "redis://localhost:{}".format(REDIS_PORT)
+
 try:
     from .local_settings import *
 except ImportError:

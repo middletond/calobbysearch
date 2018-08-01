@@ -45,6 +45,12 @@ class ActivityQuerySet(models.QuerySet):
         # else assume text / keyword query and search full names
         return self.filter(bills__full_name__iregex="\y{}\y".format(query))
 
+    def has_interests(self):
+        return self.exclude(interests="")
+
+    def has_bills(self):
+        return self.filter(bills__isnull=False)
+
     def dates(self, start=None, end=None):
         if not start:
             start = dates.BEGINNING_OF_TIME
@@ -78,26 +84,30 @@ class ActivityQuerySet(models.QuerySet):
         return self.date(today, field)
 
     # Loading methods
-    def connect_to_bills(self):
+    def connect_to_bills(self, session=None):
         """Parses bill names from activity interests and creates M2M connections."""
         connected_bills = []
         connected_acts = []
-        acts = self.exclude(interests="")
-        # chunk by session as this is some heavy lifting
-        # NOTE: takes about 5 mins per session. I'd like to try celery w this.
-        # for now only connecting latest session for expediency
-        for sesh, verbose_sesh in Session.available_choices()[:1]:
-            session_acts = acts.session(sesh)
-            act_count = session_acts.count()
-            print("Connecting bills to {} acts for session {}".format(
-                act_count, verbose_sesh))
 
-            for index, act in enumerate(session_acts, 1):
-                bills = act.find_related_bills()
-                if bills:
-                    print("{}: Act {} of {}".format(verbose_sesh, index, act_count))
-                    print("--- {} bills found.".format(bills.count()))
-                    act.bills.add(*bills)
-                    connected_bills.extend(bills)
-                    connected_acts.append(act)
+        if not session: # run all sessions if none passed
+            for sesh in Session.available_sessions():
+                bills, acts = self.connect_to_bills(sesh)
+                connected_bills.extend(bills)
+                connected_acts.extend(acts)
+            return (connected_acts, connected_bills)
+
+        acts = self.session(session).has_interests()
+        act_count = acts.count()
+
+        print("Connecting bills to {} acts for session {}".format(
+            act_count, session))
+
+        for index, act in enumerate(acts, 1):
+            bills = act.find_related_bills()
+            if bills:
+                print("{}: Act {} of {}".format(session, index, act_count))
+                print("--- {} bills found.".format(bills.count()))
+                act.bills.add(*bills)
+                connected_bills.extend(bills)
+                connected_acts.append(act)
         return (connected_acts, connected_bills)

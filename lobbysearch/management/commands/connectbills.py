@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
+from lobbysearch import queue
 from lobbysearch.models import Activity
 
 class Command(BaseCommand):
@@ -13,11 +14,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.output("Connecting all lobby activities with related bills...")
-        connected_acts, connected_bills = Activity.objects.connect_to_bills()
-        if connected_acts and connected_bills:
+
+        acts, bills = queue.connect_to_bills()
+        acts, bills = Activity.objects.connect_to_bills()
+        if acts and bills:
             self.output("Done. Connected {} acts to {} bills.".format(
-                len(connected_acts),
-                len(list(set(connected_bills))),
+                len(acts),
+                len(list(set(bills))),
             ))
         else:
             self.output_error("Warning. No acts were connected to bills.")
