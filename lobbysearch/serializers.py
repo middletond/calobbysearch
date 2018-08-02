@@ -5,7 +5,7 @@ from .models import Activity
 
 class ActivitySerializer(serializers.ModelSerializer):
     matching_bills = BillSerializer(many=True, read_only=True)
-    # bills = BillSerializer(many=True, read_only=True)
+    bills = BillSerializer(many=True, read_only=True)
 
     class Meta:
         model = Activity
@@ -13,6 +13,7 @@ class ActivitySerializer(serializers.ModelSerializer):
             "filing_id",
             "amendment_id",
             "transaction_id",
+            "filing_url",
             "form_type",
             "entity_code",
             "filing_date",
@@ -45,7 +46,7 @@ class ActivitySerializer(serializers.ModelSerializer):
             "period_total",
             "session_total",
             "matching_bills",
-            # "bills",
+            "bills",
         )
 
     def __init__(self, *args, **kwargs):

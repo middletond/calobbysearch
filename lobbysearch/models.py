@@ -8,6 +8,8 @@ from .managers import ActivityQuerySet
 
 from utils.session import Session
 
+CALACCESS_FILING_URL = "http://cal-access.sos.ca.gov/PDFGen/pdfgen.prg?filingid={filing_id}&amendid={amendment_id}"
+
 ACTIVITY_FORM_TYPE_CHOICES = (
     ("F625", "F625"),
     ("F635", "F635")
@@ -289,6 +291,10 @@ class Activity(models.Model):
     @property
     def session(self):
         return Session.string_from_date(self.start_date)
+    @property
+    def filing_url(self):
+        return CALACCESS_FILING_URL.format(filing_id=self.filing_id,
+                                           amendment_id=self.amendment_id)
 
     def find_related_bills(self):
         """Return bills based on parsed interest field."""
