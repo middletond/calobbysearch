@@ -38,7 +38,6 @@ class ActivityQuerySet(models.QuerySet):
         return self.filter(involved_entities__icontains=query)
 
     def with_bill(self, query):
-        # XXX: perhaps we should search Bill model directly, then grab act IDs from related?
         bill_names = parser.parse(query)
         if bill_names: # there are names, so search by that
             return self.filter(bills__name__in=bill_names)

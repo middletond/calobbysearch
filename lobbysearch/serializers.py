@@ -3,9 +3,9 @@ from rest_framework import serializers
 from bills.serializers import BillSerializer
 from .models import Activity
 
-
 class ActivitySerializer(serializers.ModelSerializer):
-    bills = BillSerializer(many=True, read_only=True)
+    matching_bills = BillSerializer(many=True, read_only=True)
+    # bills = BillSerializer(many=True, read_only=True)
 
     class Meta:
         model = Activity
@@ -44,5 +44,15 @@ class ActivitySerializer(serializers.ModelSerializer):
             "reimbursement",
             "period_total",
             "session_total",
-            "bills",
+            "matching_bills",
+            # "bills",
         )
+
+    def __init__(self, *args, **kwargs):
+        self.bill_query = kwargs.pop("bill_query", None)
+        super(ActivitySerializer, self).__init__(*args, **kwargs)
+
+    def to_representation(self, instance):
+        if not hasattr(instance, "matching_bills"):
+            instance.matching_bills = instance.bills.search(self.bill_query)
+        return super(ActivitySerializer, self).to_representation(instance)

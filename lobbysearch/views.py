@@ -36,7 +36,7 @@ def search(request, format=None):
     try:
         acts = Activity.objects.search(**params)
         pager, page = paginated(acts, request)
-        serializer = ActivitySerializer(page, many=True)
+        serializer = ActivitySerializer(page, many=True, bill_query=params["bill"])
         return pager.get_paginated_response(serializer.data)
     except ValueError as error:
         return Response(str(error), status=status.HTTP_400_BAD_REQUEST)
