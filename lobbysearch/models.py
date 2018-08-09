@@ -280,6 +280,9 @@ class Activity(models.Model):
         return str(self.__unicode__())
 
     @property
+    def filer(self):
+        return self.filer_name
+    @property
     def employer(self):
         return self.employer_name
     @property
