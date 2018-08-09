@@ -9,3 +9,5 @@ celery-background:
 	echo "Connect to celery feed with 'screen -r celery"
 uwsgi:
 	uwsgi --socket 127.0.0.1:8000 --module service.wsgi:application
+serve:
+	python manage.py runserver
