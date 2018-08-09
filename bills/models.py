@@ -112,6 +112,9 @@ class Bill(models.Model):
 
     objects = BillManager()
 
+    class Meta:
+        ordering = ("-session", "type", "number")
+
     def __unicode__(self):
         return "{} {}: {}".format(self.session, self.name, self.title)
 

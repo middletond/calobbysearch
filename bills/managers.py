@@ -11,7 +11,7 @@ class BillQuerySet(models.QuerySet):
         if bill_names: # there are names, so search by that
             return self.filter(name__in=bill_names)
         # else assume text / keyword query and search full names
-        return self.filter(full_name__iregex="\y{}\y".format(query))
+        return self.filter(full_name__iregex="\y{}(s?)\y".format(query))
 
 
 class BillManager(models.Manager):

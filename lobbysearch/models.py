@@ -9,6 +9,7 @@ from .managers import ActivityQuerySet
 from utils.session import Session
 
 CALACCESS_FILING_URL = "http://cal-access.sos.ca.gov/PDFGen/pdfgen.prg?filingid={filing_id}&amendid={amendment_id}"
+CALACCESS_FILER_URL = "http://cal-access.sos.ca.gov/Lobbying/Employers/Detail.aspx?id={filer_id}&view=activity"
 
 ACTIVITY_FORM_TYPE_CHOICES = (
     ("F625", "F625"),
@@ -294,6 +295,17 @@ class Activity(models.Model):
     @property
     def session(self):
         return Session.string_from_date(self.start_date)
+    @property
+    def filer_url(self):
+        return CALACCESS_FILER_URL.format(filer_id=self.filer_id)
+    @property
+    def employer_url(self):
+        if not self.employer_id: return None
+        return CALACCESS_FILER_URL.format(filer_id=self.employer_id)
+    @property
+    def lobbyer_url(self):
+        if not self.lobbyer_id: return None
+        return CALACCESS_FILER_URL.format(filer_id=self.lobbyer_id)
     @property
     def filing_url(self):
         return CALACCESS_FILING_URL.format(filing_id=self.filing_id,
