@@ -16,7 +16,7 @@ class Command(BaseCommand):
         self.output("Connecting all lobby activities with related bills...")
 
         acts, bills = queue.connect_to_bills()
-        acts, bills = Activity.objects.connect_to_bills()
+        # acts, bills = Activity.objects.connect_to_bills()
         if acts and bills:
             self.output("Done. Connected {} acts to {} bills.".format(
                 len(acts),
