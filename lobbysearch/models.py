@@ -266,7 +266,7 @@ class Activity(models.Model):
     objects = ActivityQuerySet.as_manager()
 
     class Meta:
-        ordering = ("-filing_id", "-amendment_id", "type", "-period_total",)
+        ordering = ("-filing_id", "employer_name", "lobbyer_name",)
 
     def __unicode__(self):
         return "({} - {}) {} ->{}-> {}".format(

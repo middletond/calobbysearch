@@ -45,6 +45,6 @@ def search(request, format=None):
 # refactor this into something better.
 def paginated(queryset, request):
     paginator = PageNumberPagination()
-    paginator.page_size = 100
+    paginator.page_size = 500
     paginator.paginate_queryset(queryset, request)
     return (paginator, paginator.page)

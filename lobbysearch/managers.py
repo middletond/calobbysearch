@@ -58,7 +58,9 @@ class ActivityQuerySet(models.QuerySet):
         return self.between(start, end)
 
     def latest_only(self):
-        return self.distinct("filing_id")
+        UNIQUE_ACT_FIELDS = ("filing_id", "employer_name", "lobbyer_name", "type",)
+        return self.order_by(*UNIQUE_ACT_FIELDS, "-amendment_id") \
+                   .distinct(*UNIQUE_ACT_FIELDS)
 
     def session(self, session):
         return self.between(*Session(session).as_dates())
