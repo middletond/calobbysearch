@@ -30,7 +30,7 @@ SELECT
   payments."EMPLR_ZIP4" AS lobbyer_zip,
   payments."EMPLR_PHON" AS lobbyer_phone,
   'firm' AS type,
-  payments."LBY_ACTVTY" AS interests,
+  covers."LBY_ACTVTY" AS interests,
   payments."FEES_AMT" AS compensation,
   payments."REIMB_AMT" AS reimbursement,
   payments."PER_TOTAL" AS period_total,
