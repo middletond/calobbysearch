@@ -51,7 +51,7 @@ WHERE
 AND
   summary."FORM_TYPE" = 'F635P3D'
 AND
-  summary."LINE_ITEM" = '2'
+  summary."LINE_ITEM" = '3'
 AND
   summary."AMOUNT_A" > 0
 ORDER BY
