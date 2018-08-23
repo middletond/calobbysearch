@@ -2,6 +2,12 @@
 __pycache__
 *.pyc
 
+### Ignore logs ###
+*.log
+
+### Ignore vagrant box
+.vagrant/
+
 ### Ignore virtual env ###
 venv
 
@@ -16,3 +22,6 @@ data/
 
 ### Ignore dump files
 dump.rdb
+
+### Ignore Static root
+static/
