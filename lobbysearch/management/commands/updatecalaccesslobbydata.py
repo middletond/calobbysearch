@@ -6,7 +6,7 @@ import os
 from django.core.management import call_command
 from calaccess_raw.management.commands import updatecalaccessrawdata
 
-LOBBYING_FILE_NAMES = (
+CALACCESS_LOBBYING_DATA_FILES = (
     "LPAY_CD.TSV",
     "CVR_LOBBY_DISCLOSURE_CD.TSV",
     "SMRY_CD.TSV",
@@ -25,7 +25,7 @@ class Command(updatecalaccessrawdata.Command):
         tsv_list = [f for f in os.listdir(self.tsv_dir) if '.TSV' in f.upper()]
 
         # XXX Custom code here to filter to lobbying files only.
-        tsv_list = [f for f in tsv_list if f in LOBBYING_FILE_NAMES]
+        tsv_list = [f for f in tsv_list if f in CALACCESS_LOBBYING_DATA_FILES]
 
         if self.resume:
             # get finished clean command logs of last update
