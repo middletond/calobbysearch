@@ -1,3 +1,4 @@
+from .truncate_activities import TRUNCATE_ACTIVITIES
 from .load_lobbyer_activities import LOAD_LOBBYER_ACTIVITIES
 from .load_employer_activities_firms import LOAD_EMPLOYER_ACTIVITIES_FIRMS
 from .load_employer_activities_inhouse import LOAD_EMPLOYER_ACTIVITIES_INHOUSE

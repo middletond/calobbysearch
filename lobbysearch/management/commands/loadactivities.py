@@ -19,7 +19,8 @@ class Command(BaseCommand):
 
             prev_acts = Activity.objects.all()
             self.output("Clearing {} previous activities.".format(prev_acts.count()))
-            prev_acts.delete()
+            # prev_acts.delete()
+            cursor.execute(sql.TRUNCATE_ACTIVITIES)
             self.output("Done. All cleared.")
             self.output("")
 
