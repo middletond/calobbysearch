@@ -18,8 +18,12 @@ class Command(BaseCommand):
         clear_existing = True # make this an arg
 
         self.output("Fetching latest bill records from state website...")
-        # recs = Bill.objects.fetch()
-        recs = queue.fetch_bills()
+
+        if queue.is_available():
+            recs = queue.fetch_bills()
+        else:
+            recs = Bill.objects.fetch()
+
         if not recs:
             self.output_error("Warning. No bill records were fetched.")
             sys.exit(1)

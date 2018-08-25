@@ -2,11 +2,17 @@
 
 """
 from celery import group
+from celery.app.control import Inspect
+from service.celery import app as celery_app
 
 from utils.session import Session
 from utils.arrays import flatten
 
 from . import tasks
+
+def is_available():
+    """Boolean for whether celery has nodes available for async tasks."""
+    return True if Inspect(app=celery_app).ping() else False
 
 def fanout(taskname, iterable, block=True, **kwargs):
     """Run a passed function asynchronously."""
@@ -37,34 +43,3 @@ def connect_to_bills(sessions=None):
 
 def fetch_bills(sessions=None):
     return fanout_by_session("fetch_bills", sessions)
-
-# import gevent
-# import requests
-#
-# import gevent.monkey
-# gevent.monkey.patch_socket()
-#
-# from gevent.pool import Pool
-# from utils.arrays import flatten
-#
-# CONCURRENCY = 3
-#
-# def run(func, arglist, fanout=True, concurrency=CONCURRENCY, callback=None):
-#     """Run a passed function asynchronously."""
-#     if not isinstance(arglist, (tuple, list)):
-#         arglist = [arglist]
-#
-#     if fanout: # one job for each arg
-#         pool = Pool(size=concurrency)
-#         results = pool.map(func, arglist)
-#         return flatten(results)
-#     # single job with all args
-#     return gevent.spawn(func, *arglist).get()
-
-#
-# def fetch(url):
-#     print('Fetching %s' % url)
-#     resp = requests.get(url)
-#     data = resp.text
-#     print('%s: %s bytes: %r' % (url, len(data), data[:50]))
-#     return resp
