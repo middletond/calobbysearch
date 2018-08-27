@@ -60,7 +60,7 @@ source $VIRTUALENV_NAME"/bin/activate"
 pip3 install -r requirements.txt >> setup.log
 
 echo "Adding to .bashrc for easier ssh."
-echo "cd $SITE_ROOT" >> /home/vagrant/.bashrc
-echo "source $VIRTUALENV_NAME/bin/activate" >> /home/vagrant/.bashrc
+echo "cd $SITE_ROOT" >> ~/.bashrc
+echo "source $VIRTUALENV_NAME/bin/activate" >> ~/.bashrc
 
 echo "Server is set up."
