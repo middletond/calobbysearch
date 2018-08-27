@@ -36,10 +36,10 @@ echo "Linking $SERVER_CONF_SOURCE to $SERVER_CONF_DEST"
 sudo rm $SERVER_CONF_DEST
 sudo ln -s $SERVER_CONF_SOURCE $SERVER_CONF_DEST >> setup.log
 
-echo "Linking $NGINX_CONF_SOURCE to $NGINX_CONF_DEST."
-echo "NOTE: this is ONLY required to fix a bug in vagrant / virtualbox, i.e. development ONLY."
-sudo rm $NGINX_CONF_DEST
-sudo ln -s $NGINX_CONF_SOURCE $NGINX_CONF_DEST >> setup.log
+# echo "Linking $NGINX_CONF_SOURCE to $NGINX_CONF_DEST."
+# echo "NOTE: this is ONLY required to fix a bug in vagrant / virtualbox, i.e. development ONLY."
+# sudo rm $NGINX_CONF_DEST
+# sudo ln -s $NGINX_CONF_SOURCE $NGINX_CONF_DEST >> setup.log
 
 echo "Installing PostgreSQL."
 sudo apt-get -y install postgresql >> setup.log
