@@ -4,14 +4,14 @@
 
 sudo touch certbot.log
 
-echo "Update apt repo..."
+echo "Updating apt repo..."
 sudo apt-get install -y software-properties-common >> certbot.log
 sudo add-apt-repository -y ppa:certbot/certbot >> certbot.log
 sudo apt-get update >> certbot.log
 echo "Installing certbot package."
 sudo apt-get install -y python-certbot-nginx  >> certbot.log
 
-echo "Install SSL cert and configuring nginx."
+echo "Installing SSL cert and configuring nginx."
 sudo service nginx stop # nginx must be turned off to install the cert
 sudo certbot --nginx
 sudo service nginx start
