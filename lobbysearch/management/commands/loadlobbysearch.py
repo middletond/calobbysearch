@@ -19,7 +19,6 @@ class Command(BaseCommand):
         self.output("Downloading, cleaning, and loading raw lobbying data from CAL-ACCESS.")
         self.output("Note: this takes about an 20 mins.")
         self.output("-----------")
-        self.output("")
         management.call_command("updatecalaccesslobbydata")
 
         self.output("")
@@ -27,7 +26,6 @@ class Command(BaseCommand):
         self.output("STEP 2 OF 4")
         self.output("Loading filed lobby activities from CAL-ACCESS raw data.")
         self.output("-----------")
-        self.output("")
         management.call_command("loadactivities")
 
         self.output("")
@@ -35,7 +33,6 @@ class Command(BaseCommand):
         self.output("STEP 3 OF 4")
         self.output("Loading all bills from {}.".format(bill_names.DOMAIN))
         self.output("-----------")
-        self.output("")
         management.call_command("loadbills")
 
         self.output("")
@@ -44,7 +41,6 @@ class Command(BaseCommand):
         self.output("Parsing bill names from filed activities and connecting to loaded bills.")
         self.output("Note: this takes about an hour. Time for a good psoas stretch.")
         self.output("-----------")
-        self.output("")
         management.call_command("connectbills")
 
         self.output("Loading complete. Ready for searching!")
