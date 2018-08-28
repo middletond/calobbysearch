@@ -19,7 +19,7 @@ class Command(BaseCommand):
         self.output("Downloading, cleaning, and loading raw lobbying data from CAL-ACCESS.")
         self.output("Note: this takes about an 20 mins.")
         self.output("-----------")
-        management.call_command("updatecalaccesslobbydata")
+        management.call_command("updatecalaccess")
 
         self.output("")
         self.output("-----------")

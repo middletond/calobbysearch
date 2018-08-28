@@ -35,6 +35,10 @@ def search_activities(request, format=None):
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
     try:
         # acts = Search.objects.activities(**params) # like this?
+        # or like this?
+        # search = Search(request)
+        # acts = search.activities(**params)
+        # search.save()
         acts = Activity.objects.search(**params)
         pager, page = paginated(acts, request)
         serializer = ActivitySerializer(page, many=True, bill_query=params["bill"])
