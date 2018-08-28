@@ -16,3 +16,17 @@ class LoadAttemptAdmin(admin.ModelAdmin):
         "connectbills_finished",
         "finished",
     )
+
+@admin.register(models.Search)
+class SearchAdmin(admin.ModelAdmin):
+    """Admin for requested searches."""
+    list_display = (
+        "created",
+        "company",
+        "interest",
+        "bill",
+        "start",
+        "end",
+        "session",
+        "latest_only",
+    )

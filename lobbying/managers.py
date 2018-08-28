@@ -11,25 +11,25 @@ DEFAULT_DATE_FIELD = "start_date"
 class ActivityQuerySet(models.QuerySet):
     """Queryset for `Activity` model."""
 
-    def search(self, interest=None, company=None, bill=None,
-               start=None, end=None, session=None, latest_only=True):
-        # default to latest session if no date params
-        if not(start or end or session):
-            start, end = Session().as_dates()
-        elif session: # session takes precedence over start / end
-            start, end = Session(session).as_dates();
-        # filter down by date ranges
-        acts = self.dates(start, end)
-        # filter down by text queries
-        if interest:
-            acts = acts.with_interest(interest)
-        if company:
-            acts = acts.with_company(company)
-        if bill:
-            acts = acts.with_bill(bill)
-        if latest_only:
-            acts = acts.latest_only()
-        return acts
+    # def search(self, interest=None, company=None, bill=None,
+    #            start=None, end=None, session=None, latest_only=True):
+    #     # default to latest session if no date params
+    #     if not(start or end or session):
+    #         start, end = Session().as_dates()
+    #     elif session: # session takes precedence over start / end
+    #         start, end = Session(session).as_dates();
+    #     # filter down by date ranges
+    #     acts = self.dates(start, end)
+    #     # filter down by text queries
+    #     if interest:
+    #         acts = acts.with_interest(interest)
+    #     if company:
+    #         acts = acts.with_company(company)
+    #     if bill:
+    #         acts = acts.with_bill(bill)
+    #     if latest_only:
+    #         acts = acts.latest_only()
+    #     return acts
 
     def with_interest(self, query):
         return self.filter(interests__icontains=query)

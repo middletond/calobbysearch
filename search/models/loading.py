@@ -1,9 +1,5 @@
 from django.db import models
 
-class Search(models.Model):
-    """A requested search of lobby data."""
-    pass
-
 
 class LoadAttempt(models.Model):
     """An attempt to load the latest lobby data into database.

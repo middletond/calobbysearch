@@ -7,44 +7,52 @@ from rest_framework.pagination import PageNumberPagination
 
 from lobbying.models import Activity
 from lobbying.serializers import ActivitySerializer
-
-TEXT_QUERIES = ("company", "interest", "bill")
+from .models import Search
 
 @api_view(["GET"])
 def search_activities(request, format=None):
     """Search for lobby activities by interest, company, or bill.
 
     """
-    errors = []
-    params = {
+    search = Search(
+        type = "activities",
         # text
-        "company": request.GET.get("company", None),
-        "interest": request.GET.get("interest", None),
-        "bill": request.GET.get("bill", None),
+        company = request.GET.get("company", None),
+        interest = request.GET.get("interest", None),
+        bill = request.GET.get("bill", None),
         # dates
-        "session": request.GET.get("session", None),
-        "start": request.GET.get("start", None),
-        "end": request.GET.get("end", None),
+        session = request.GET.get("session", None),
+        start = request.GET.get("start", None),
+        end = request.GET.get("end", None),
         # meta
-        "latest_only": True if int(request.GET.get("latest_only", True)) else False
-    }
-    text_queries = {key: params[key] for key in TEXT_QUERIES if params[key]}
-    if not text_queries:
-        message = "Please include one or more text parameters to search for: "
-        message += ", ".join(TEXT_QUERIES)
+        latest_only = True if int(request.GET.get("latest_only", True)) else False
+    )
+    if not search.text_params:
+        message = "To run a search, include one or more text parameters to search for: "
+        message += ", ".join(Search.VALID_TEXT_PARAMS)
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
     try:
-        # acts = Search.objects.activities(**params) # like this?
-        # or like this?
-        # search = Search(request)
-        # acts = search.activities(**params)
-        # search.save()
-        acts = Activity.objects.search(**params)
+        search.save()
+        acts = search.results()
         pager, page = paginated(acts, request)
-        serializer = ActivitySerializer(page, many=True, bill_query=params["bill"])
+        serializer = ActivitySerializer(page, many=True, bill_query=search.bill)
         return pager.get_paginated_response(serializer.data)
     except ValueError as error:
         return Response(str(error), status=status.HTTP_400_BAD_REQUEST)
+
+    # text_query_params = {key: params[key] for key in TEXT_QUERIES if params[key]}
+    # if not text_query_params:
+    #     message = "To run a search, include one or more text parameters to search for: "
+    #     message += ", ".join(TEXT_QUERIES)
+    #     return Response(message, status=status.HTTP_400_BAD_REQUEST)
+    # try
+    #     search = Search.objects.create(**params, type="activities")
+    #     acts = search.results()
+    #     pager, page = paginated(acts, request)
+    #     serializer = ActivitySerializer(page, many=True, bill_query=params["bill"])
+    #     return pager.get_paginated_response(serializer.data)
+    # except ValueError as error:
+    #     return Response(str(error), status=status.HTTP_400_BAD_REQUEST)
 
 
 # refactor this into something better.
