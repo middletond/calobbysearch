@@ -1,46 +1,60 @@
-from django.core.management.base import BaseCommand
+from django.utils import timezone
 from django.core import management
 
 from scrape.leginfo import bill_names
+from search.models import LoadAttempt
+from . import LobbySearchCommand
 
-class Command(BaseCommand):
+COMMAND_BEGAN = "began"
+COMMAND_FINISHED = "finished"
+
+class Command(LobbySearchCommand):
     help = "Master command to download, clean, load, and connect lobbying data and bills."
 
-    def output(self, msg):
-        self.stdout.write(self.style.SUCCESS(msg))
+    def __init__(self, *args, **kwargs):
+        self.step = 1
+        self.began = timezone.now()
+        self.finished = None
+        self.attempt = LoadAttempt.objects.create(began=self.began)
 
-    def output_error(self, msg):
-        self.stdout.write(self.style.ERROR(msg))
+        return super(Command, self).__init__(*args, **kwargs)
 
-    def handle(self, *args, **kwargs):
-        self.output("")
-        self.output("-----------")
-        self.output("STEP 1 OF 4")
-        self.output("Downloading, cleaning, and loading raw lobbying data from CAL-ACCESS.")
-        self.output("Note: this takes about an 20 mins.")
-        self.output("-----------")
-        management.call_command("updatecalaccess")
+    def handle(self, *args, **options):
+        self.header("Downloading, cleaning, and loading raw lobbying data from CAL-ACCESS.")
+        self.call_subcommand("updatecalaccess")
 
-        self.output("")
-        self.output("-----------")
-        self.output("STEP 2 OF 4")
-        self.output("Loading filed lobby activities from CAL-ACCESS raw data.")
-        self.output("-----------")
-        management.call_command("loadactivities")
+        self.header("Loading filed lobby activities from CAL-ACCESS raw data.")
+        self.call_subcommand("loadactivities")
 
-        self.output("")
-        self.output("-----------")
-        self.output("STEP 3 OF 4")
-        self.output("Loading all bills from {}.".format(bill_names.DOMAIN))
-        self.output("-----------")
-        management.call_command("loadbills")
+        self.header("Loading all bills from {}.".format(bill_names.DOMAIN))
+        self.call_subcommand("loadbills")
 
-        self.output("")
-        self.output("-----------")
-        self.output("STEP 4 OF 4")
-        self.output("Parsing bill names from filed activities and connecting to loaded bills.")
-        self.output("Note: this takes about an hour. Time for a good psoas stretch.")
-        self.output("-----------")
-        management.call_command("connectbills")
+        self.header("Finding bill names in filed activities and connecting to loaded bills.")
+        self.call_subcommand("connectbills")
 
         self.output("Loading complete. Ready for searching!")
+
+        self.attempt.finished = timezone.now()
+        self.attempt.save()
+
+    def call_subcommand(self, command, *args, **kwargs):
+        self.update_attempt(command, COMMAND_BEGAN)
+        management.call_command(command, *args, **kwargs)
+        self.update_attempt(command, COMMAND_FINISHED)
+
+    def update_attempt(self, command, event):
+        field_to_update = "{}_{}".format(command, event)
+        if hasattr(self.attempt, field_to_update):
+            setattr(self.attempt, field_to_update, timezone.now())
+            self.attempt.save()
+
+    def header(self, message, time_estimate=None):
+        header = "\n"
+        header += "-----------\n"
+        header += "STEP {} OF 4\n".format(self.step)
+        header += message + "\n"
+        if time_estimate:
+            header += "Note: this takes about {}.\n".format(time_estimate)
+        header += "-----------\n"
+        self.output(header)
+        self.step += 1

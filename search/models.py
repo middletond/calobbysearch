@@ -17,35 +17,35 @@ class LoadAttempt(models.Model):
         null=True,
         help_text="When the load attempt finished."
     )
-    update_calaccess_began = models.DateTimeField(
+    updatecalaccess_began = models.DateTimeField(
         null=True,
         help_text="When `updatecalaccess` command began."
     )
-    update_calaccess_finished = models.DateTimeField(
+    updatecalaccess_finished = models.DateTimeField(
         null=True,
         help_text="When `updatecalaccess` command finished."
     )
-    load_activities_began = models.DateTimeField(
+    loadactivities_began = models.DateTimeField(
         null=True,
         help_text="When `loadactivities` command began."
     )
-    load_activities_finished = models.DateTimeField(
+    loadactivities_finished = models.DateTimeField(
         null=True,
         help_text="When `loadactivities` command finished."
     )
-    load_bills_began = models.DateTimeField(
+    loadbills_began = models.DateTimeField(
         null=True,
         help_text="When `loadbills` command began."
     )
-    load_bills_finished = models.DateTimeField(
+    loadbills_finished = models.DateTimeField(
         null=True,
         help_text="When `loadbills` command finished."
     )
-    connect_bills_began = models.DateTimeField(
+    connectbills_began = models.DateTimeField(
         null=True,
         help_text="When `connectbills` command began."
     )
-    connect_bills_finished = models.DateTimeField(
+    connectbills_finished = models.DateTimeField(
         null=True,
         help_text="When `connectbills` command finished."
     )
