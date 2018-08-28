@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('bills', '0004_normalized_field'),
-        ('lobbysearch', '0003_update_activity_fields'),
+        ('lobbying', '0003_update_activity_fields'),
     ]
 
     operations = [

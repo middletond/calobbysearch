@@ -1,6 +1,6 @@
 # Load employer in-house activity filings (F635, Section P3A, lines 1 and 2)
 LOAD_EMPLOYER_ACTIVITIES_INHOUSE = """
-INSERT INTO lobbysearch_activity (filing_id, amendment_id, form_type, entity_code, filer_id, filer_name, filer_last_name, filer_first_name, employer_id, employer_name, employer_last_name, employer_first_name, employer_city, employer_state, employer_zip, employer_phone, filing_date, start_date, end_date, lobbyer_id, lobbyer_name, lobbyer_last_name, lobbyer_first_name, lobbyer_city, lobbyer_state, lobbyer_zip, lobbyer_phone, type, interests, compensation, reimbursement, period_total, session_total, involved_entities)
+INSERT INTO lobbying_activity (filing_id, amendment_id, form_type, entity_code, filer_id, filer_name, filer_last_name, filer_first_name, employer_id, employer_name, employer_last_name, employer_first_name, employer_city, employer_state, employer_zip, employer_phone, filing_date, start_date, end_date, lobbyer_id, lobbyer_name, lobbyer_last_name, lobbyer_first_name, lobbyer_city, lobbyer_state, lobbyer_zip, lobbyer_phone, type, interests, compensation, reimbursement, period_total, session_total, involved_entities)
 SELECT
   covers."FILING_ID" AS filing_id,
   CAST (covers."AMEND_ID" AS INTEGER) AS amendment_id,

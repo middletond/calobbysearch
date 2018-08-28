@@ -43,8 +43,10 @@ INSTALLED_APPS = [
     "rest_framework",
     "calaccess_raw",
     # app
-    "lobbysearch",
     "bills",
+    "lobbying",
+    "search",
+    "service",
 ]
 
 MIDDLEWARE = [
@@ -125,26 +127,19 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
+
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 STATIC_URL = "/static/"
 
-# CORS
-
-# https://github.com/crs4/ome_seadragon/wiki/Enable-Django-CORS
-#-(Cross-Origin-Resource-Sharing)-Headers-configuration
+# CORS Headers
 
 CORS_ORIGIN_ALLOW_ALL = True # connections from anywhere
 
-# CORS_ORIGIN_WHITELIST = ( # connections from specified hosts
-#     'congo.local',
-# )
+# Celery / Redis Queue
 
-# Celery Queue
-RABBITMQ_PORT = 5672
 REDIS_PORT = 6379
 
-# CELERY_BROKER_URL = "amqp://guest:guest@localhost:{}".format(RABBITMQ_PORT)
 CELERY_BROKER_URL = "redis://localhost:{}".format(REDIS_PORT)
 CELERY_RESULT_BACKEND = "redis://localhost:{}".format(REDIS_PORT)
 

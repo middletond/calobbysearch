@@ -1,11 +1,11 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection as django_connection
 
-from lobbysearch.management import sql
-from lobbysearch.models import Activity
+from lobbying.models import Activity
+from search.management import sql
 
 class Command(BaseCommand):
-    help = "Load CAL-ACCESS raw data into lobbysearch Activity model."
+    help = "Load CAL-ACCESS raw data into lobbying Activity model."
 
     def output(self, msg):
         self.stdout.write(self.style.SUCCESS(msg))

@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from lobbysearch import queue
-from lobbysearch.models import Activity
+from lobbying.models import Activity
+from search import queue
 
 class Command(BaseCommand):
     help = "Creates M2M connections between `Activity` and `Bill` instances."

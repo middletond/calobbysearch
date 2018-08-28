@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lobbysearch', '0002_activity_type'),
+        ('lobbying', '0002_activity_type'),
     ]
 
     operations = [

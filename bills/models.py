@@ -1,7 +1,7 @@
 from django.db import models
 
 from .managers import BillManager
-from .parser import parse_type, parse_number, parse_one
+from . import parser as bill_parser
 
 from utils.session import Session
 
@@ -32,7 +32,7 @@ class Bill(models.Model):
        1. A list of all bills and their basic data is loaded by scraping
           leginfo.legislature.ca.gov
        2. Bills are connected to lobbying by parsing bill names from the
-          `interests` field in `lobbysearch.Activity` records. """
+          `interests` field in `lobbying.models.Activity` records. """
     # basics
     type = models.CharField(
         max_length=3,
@@ -122,11 +122,11 @@ class Bill(models.Model):
         return str(self.__unicode__())
 
     def normalize(self):
-        self.name = parse_one(self.name) # coerce to correct format
+        self.name = bill_parser.parse_one(self.name) # coerce to correct format
         if not self.type:
-            self.type = parse_type(self.name)
+            self.type = bill_parser.parse_type(self.name)
         if not self.number:
-            self.number = parse_number(self.name)
+            self.number = bill_parser.parse_number(self.name)
         if not self.title:
             self.title = ""
         if len(self.title) > TITLE_MAX_LENGTH:

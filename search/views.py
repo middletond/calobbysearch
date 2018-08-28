@@ -5,13 +5,13 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
-from .models import Activity
-from .serializers import ActivitySerializer
+from lobbying.models import Activity
+from lobbying.serializers import ActivitySerializer
 
 TEXT_QUERIES = ("company", "interest", "bill")
 
 @api_view(["GET"])
-def search(request, format=None):
+def search_activities(request, format=None):
     """Search for lobby activities by interest, company, or bill.
 
     """
@@ -34,6 +34,7 @@ def search(request, format=None):
         message += ", ".join(TEXT_QUERIES)
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
     try:
+        # acts = Search.objects.activities(**params) # like this?
         acts = Activity.objects.search(**params)
         pager, page = paginated(acts, request)
         serializer = ActivitySerializer(page, many=True, bill_query=params["bill"])

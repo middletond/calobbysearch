@@ -3,7 +3,7 @@
 """
 from celery import group
 from celery.app.control import Inspect
-from service.celery import app as celery_app
+from service import celery_app
 
 from utils.session import Session
 from utils.arrays import flatten

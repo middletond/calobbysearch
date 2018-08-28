@@ -2,8 +2,8 @@ import sys
 
 from django.core.management.base import BaseCommand, CommandError
 
-from lobbysearch import queue
 from bills.models import Bill
+from search import queue
 
 class Command(BaseCommand):
     help = "Load canonical bill data from leginfo.legislature.gov into Bill model."
