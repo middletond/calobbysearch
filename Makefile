@@ -1,5 +1,5 @@
 celery:
-	celery -A service worker -l info -c 10
+	celery -A service worker -l info -c 5
 celery-debug:
 	celery -A service worker -l debug -c 1
 celery-background:
