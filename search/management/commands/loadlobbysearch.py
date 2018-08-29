@@ -21,7 +21,7 @@ class Command(LobbySearchCommand):
 
     def handle(self, *args, **options):
         self.header("Downloading, cleaning, and loading raw lobbying data from CAL-ACCESS.")
-        self.call_subcommand("updatecalaccess")
+        self.call_subcommand("updatecalaccess", noinput=True)
 
         self.header("Loading filed lobby activities from CAL-ACCESS raw data.")
         self.call_subcommand("loadactivities")
