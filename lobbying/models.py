@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.utils.safestring import mark_safe
 
 from bills import parser
 from bills.models import Bill
@@ -267,6 +268,7 @@ class Activity(models.Model):
 
     class Meta:
         ordering = ("-filing_id", "employer_name", "lobbyer_name",)
+        verbose_name_plural = "Activities"
 
     def __unicode__(self):
         return "({} - {}) {} ->{}-> {}".format(
@@ -310,6 +312,8 @@ class Activity(models.Model):
     def filing_url(self):
         return CALACCESS_FILING_URL.format(filing_id=self.filing_id,
                                            amendment_id=self.amendment_id)
+    def filed_by(self):
+        return "employer" if self.form_type == "F635" else "lobbyer"
 
     def is_internal(self):
         """Checks whether lobbying type is internal versus contracted."""
@@ -322,3 +326,9 @@ class Activity(models.Model):
             session=self.session,
             name__in=bill_names,
         )
+
+    def source_link(self):
+        return mark_safe(
+            "<a href='{}' target='_blank'>Cal-Access Filings</a>".format(self.filing_url)
+        )
+    source_link.short_description = "Source"

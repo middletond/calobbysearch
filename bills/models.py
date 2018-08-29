@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.safestring import mark_safe
 
 from .managers import BillManager
 from . import parser as bill_parser
@@ -120,6 +121,12 @@ class Bill(models.Model):
 
     def __str__(self):
         return str(self.__unicode__())
+
+    def source_link(self):
+        return mark_safe(
+            "<a href='{}' target='_blank'>leginfo.gov</a>".format(self.url)
+        )
+    source_link.short_description = "Source"
 
     def normalize(self):
         self.name = bill_parser.parse_one(self.name) # coerce to correct format
