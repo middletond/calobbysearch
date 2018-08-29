@@ -1,2 +1,2 @@
-from .loading import LoadAttempt
+from .records import PopulationAttempt
 from .queries import Search

@@ -1,8 +1,8 @@
 from django.db import models
 
 
-class LoadAttempt(models.Model):
-    """An attempt to load the latest lobby data into database.
+class PopulationAttempt(models.Model):
+    """An attempt to populate the database with the latest lobby records.
 
     """
     began = models.DateTimeField(

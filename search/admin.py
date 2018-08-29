@@ -1,8 +1,8 @@
 from django.contrib import admin
 from . import models
 
-@admin.register(models.LoadAttempt)
-class LoadAttemptAdmin(admin.ModelAdmin):
+@admin.register(models.PopulationAttempt)
+class PopulationAttemptAdmin(admin.ModelAdmin):
     """Admin for load attempts."""
     list_display = (
         "began",
