@@ -1,0 +1,11 @@
+# To deploy, invoke `crontab -e` and copy commands below into the opened cron file.
+# Change the PROJECT_DIR path as needed.
+PROJECT_DIR=/var/www/lobbysearch
+VIRTUALENV_PYTHON=/var/www/lobbysearch/venv/bin/python3.5
+
+# m h  dom mon dow   command
+
+# Load new search data every morning after SOS posts it around 430am.
+0 5 * * * $VIRTUALENV_PYTHON $PROJECT_DIR/manage.py loadlobbysearch
+# Check on daily and renew SSL cert via certbot
+0 0 * * * /usr/bin/certbot renew
