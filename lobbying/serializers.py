@@ -57,6 +57,10 @@ class ActivitySerializer(serializers.ModelSerializer):
         super(ActivitySerializer, self).__init__(*args, **kwargs)
 
     def to_representation(self, instance):
+        # Add matching bills
         if not hasattr(instance, "matching_bills"):
             instance.matching_bills = instance.bills.search(self.bill_query)
+        # If lobbying of an internal type, fill in lobbyer field w type
+        if instance.is_internal():
+            instance.lobbyer_name = instance.get_type_display()
         return super(ActivitySerializer, self).to_representation(instance)

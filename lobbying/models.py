@@ -311,6 +311,10 @@ class Activity(models.Model):
         return CALACCESS_FILING_URL.format(filing_id=self.filing_id,
                                            amendment_id=self.amendment_id)
 
+    def is_internal(self):
+        """Checks whether lobbying type is internal versus contracted."""
+        return self.type in ("inhouse", "other")
+
     def find_related_bills(self):
         """Return bills based on parsed interest field."""
         bill_names = parser.parse(self.interests)
@@ -318,6 +322,3 @@ class Activity(models.Model):
             session=self.session,
             name__in=bill_names,
         )
-
-# class Registration(models.Model):
-#     pass
