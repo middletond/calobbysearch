@@ -2,7 +2,7 @@ from django.utils import timezone
 from django.core import management
 
 from scrape.leginfo import bill_names
-from search.models import LoadAttempt
+from search.models import PopulationAttempt
 from . import LobbySearchCommand
 
 COMMAND_BEGAN = "began"
@@ -14,22 +14,21 @@ class Command(LobbySearchCommand):
     def __init__(self, *args, **kwargs):
         self.step = 1
         self.began = timezone.now()
-        self.finished = None
-        self.attempt = LoadAttempt.objects.create(began=self.began)
+        self.attempt = PopulationAttempt.objects.create(began=self.began)
 
         return super(Command, self).__init__(*args, **kwargs)
 
     def handle(self, *args, **options):
-        self.header("Downloading, cleaning, and loading raw lobbying data from CAL-ACCESS.")
+        self.announce_subcommand("Downloading, cleaning, and loading raw lobbying data from CAL-ACCESS.")
         self.call_subcommand("updatecalaccess", noinput=True)
 
-        self.header("Loading filed lobby activities from CAL-ACCESS raw data.")
+        self.announce_subcommand("Loading filed lobby activities from CAL-ACCESS raw data.")
         self.call_subcommand("loadactivities")
 
-        self.header("Loading all bills from {}.".format(bill_names.DOMAIN))
+        self.announce_subcommand("Loading all bills from {}.".format(bill_names.DOMAIN))
         self.call_subcommand("loadbills")
 
-        self.header("Finding bill names in filed activities and connecting to loaded bills.")
+        self.announce_subcommand("Finding bill names in filed activities and connecting to loaded bills.")
         self.call_subcommand("connectbills")
 
         self.output("Loading complete. Ready for searching!")
@@ -48,13 +47,12 @@ class Command(LobbySearchCommand):
             setattr(self.attempt, field_to_update, timezone.now())
             self.attempt.save()
 
-    def header(self, message, time_estimate=None):
-        header = "\n"
-        header += "-----------\n"
-        header += "STEP {} OF 4\n".format(self.step)
-        header += message + "\n"
+    def announce_subcommand(self, message, time_estimate=None):
+        self.header("")
+        self.header("-----------")
+        self.header("STEP {} OF 4".format(self.step))
+        self.header(message + "")
         if time_estimate:
-            header += "Note: this takes about {}.\n".format(time_estimate)
-        header += "-----------\n"
-        self.output(header)
+            self.header("Note: this takes about {}.".format(time_estimate))
+        self.header("-----------")
         self.step += 1

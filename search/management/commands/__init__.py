@@ -1,9 +1,16 @@
 from django.core.management.base import BaseCommand
+from django.utils.termcolors import colorize
 
 class LobbySearchCommand(BaseCommand):
 
-    def output(self, msg):
-        self.stdout.write(self.style.SUCCESS(msg))
+    def header(self, msg):
+        self.stdout.write(colorize(msg, fg="cyan", opts=("bold",)))
 
-    def output_error(self, msg):
-        self.stdout.write(self.style.ERROR(msg))
+    def output(self, msg):
+        self.stdout.write(colorize(msg, fg="white"))
+
+    def success(self, msg):
+        self.stdout.write(colorize(msg, fg="green", opts=("bold",)))
+
+    def failure(self, msg):
+        self.stdout.write(colorize(msg, fg="red", opts=("bold",)))
