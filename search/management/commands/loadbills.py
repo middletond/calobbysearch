@@ -11,7 +11,7 @@ class Command(LobbySearchCommand):
     def handle(self, *args, **options):
         clear_existing = True # make this an arg
 
-        self.output("Fetching latest bill records from state website...")
+        self.header("Fetching latest bill records from state website...")
 
         if queue.is_available():
             recs = queue.fetch_bills()
@@ -22,9 +22,9 @@ class Command(LobbySearchCommand):
             self.failure("Warning. No bill records were fetched.")
             sys.exit(1)
         else:
-            self.success("Done. {} records fetched.".format(len(recs)))
+            self.output("Done. {} records fetched.".format(len(recs)))
 
-        self.output("Loading bills into app using fetched records...")
+        self.header("Loading bills into app using fetched records...")
         bills = Bill.objects.load(recs, clear_existing=clear_existing)
 
         if not bills:

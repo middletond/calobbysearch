@@ -18,9 +18,20 @@ class Command(LobbySearchCommand):
 
         return super(Command, self).__init__(*args, **kwargs)
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--noinput",
+            action="store_true",
+            dest="noinput",
+            default=False,
+            help="Run CAL-ACCESS update without asking permission"
+        )
+
     def handle(self, *args, **options):
+        self.noinput = options["noinput"]
+
         self.announce_subcommand("Downloading, cleaning, and loading raw lobbying data from CAL-ACCESS.")
-        self.call_subcommand("updatecalaccess", noinput=True)
+        self.call_subcommand("updatecalaccess", noinput=self.noinput)
 
         self.announce_subcommand("Loading filed lobby activities from CAL-ACCESS raw data.")
         self.call_subcommand("loadactivities")
@@ -47,12 +58,11 @@ class Command(LobbySearchCommand):
             setattr(self.attempt, field_to_update, timezone.now())
             self.attempt.save()
 
-    def announce_subcommand(self, message, time_estimate=None):
+    def announce_subcommand(self, message):
         self.header("")
         self.header("-----------")
         self.header("STEP {} OF 4".format(self.step))
         self.header(message + "")
-        if time_estimate:
-            self.header("Note: this takes about {}.".format(time_estimate))
         self.header("-----------")
+        self.header("")
         self.step += 1

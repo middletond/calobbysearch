@@ -7,7 +7,7 @@ class Command(LobbySearchCommand):
     help = "Creates M2M connections between `Activity` and `Bill` instances."
 
     def handle(self, *args, **options):
-        self.output("Connecting all lobby activities with related bills...")
+        self.header("Connecting all lobby activities with related bills...")
 
         if queue.is_available():
             acts, bills = queue.connect_to_bills()
