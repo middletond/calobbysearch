@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.utils.termcolors import colorize
 
+OUTCOME_DELIMITER = " " # outcome should only be integers
+
 class LobbySearchCommand(BaseCommand):
 
     def header(self, msg):
@@ -14,3 +16,17 @@ class LobbySearchCommand(BaseCommand):
 
     def failure(self, msg):
         self.stdout.write(colorize(msg, fg="red", opts=("bold",)))
+
+    def outcome_to_string(self, outcome):
+        """Django only allows commands to output as strings."""
+        if not outcome: # django ignores outcomes that resolve to false
+            return outcome
+        if isinstance(outcome, (tuple, list)):
+            return OUTCOME_DELIMITER.join(str(val) for val in outcome)
+        return str(outcome)
+
+    def outcome_from_string(self, string):
+        """And back again."""
+        if OUTCOME_DELIMITER in string:
+            return tuple(string.split())
+        return int(string)

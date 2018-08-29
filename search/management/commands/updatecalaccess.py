@@ -3,8 +3,10 @@ Download, clean and load lobbying tables from the latest CAL-ACCESS database.
 """
 import os
 
-from django.core.management import call_command
+from django.core.management import call_command, CommandError
 from calaccess_raw.management.commands import updatecalaccessrawdata
+
+from search.models.records import COMMAND_FAILED
 
 CALACCESS_LOBBYING_DATA_FILES = (
     "LPAY_CD.TSV",

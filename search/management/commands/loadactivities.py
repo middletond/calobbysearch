@@ -55,3 +55,5 @@ class Command(LobbySearchCommand):
             self.success("Loading complete! {} total activities loaded.".format(insert_count))
         else:
             self.failure("WARNING: no new activities were loaded.")
+
+        return self.outcome_to_string(insert_count)

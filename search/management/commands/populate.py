@@ -1,20 +1,17 @@
 from django.utils import timezone
-from django.core import management
+from django.core.management import call_command
 
 from scrape.leginfo import bill_names
-from search.models import PopulationAttempt
+from search.models.records import PopulationAttempt, COMMAND_BEGAN
 from . import LobbySearchCommand
-
-COMMAND_BEGAN = "began"
-COMMAND_FINISHED = "finished"
 
 class Command(LobbySearchCommand):
     help = "Master command to download, clean, load, and connect lobbying data and bills."
 
     def __init__(self, *args, **kwargs):
         self.step = 1
-        self.began = timezone.now()
-        self.attempt = PopulationAttempt.objects.create(began=self.began)
+        self.attempt = PopulationAttempt()
+        self.attempt.begin()
 
         return super(Command, self).__init__(*args, **kwargs)
 
@@ -44,19 +41,18 @@ class Command(LobbySearchCommand):
 
         self.output("Loading complete. Ready for searching!")
 
-        self.attempt.finished = timezone.now()
-        self.attempt.save()
+        self.attempt.finish(notify=True)
 
     def call_subcommand(self, command, *args, **kwargs):
-        self.update_attempt(command, COMMAND_BEGAN)
-        management.call_command(command, *args, **kwargs)
-        self.update_attempt(command, COMMAND_FINISHED)
-
-    def update_attempt(self, command, event):
-        field_to_update = "{}_{}".format(command, event)
-        if hasattr(self.attempt, field_to_update):
-            setattr(self.attempt, field_to_update, timezone.now())
-            self.attempt.save()
+        try:
+            self.attempt.log(command, COMMAND_BEGAN)
+            outcome = self.outcome_from_string(
+                call_command(command, *args, **kwargs)
+            )
+            self.attempt.log_success(command, outcome)
+        except Exception as error:
+            self.attempt.log_failure(command, error)
+            self.failure("Warning! This step not completed because of error: {}".format(error))
 
     def announce_subcommand(self, message):
         self.header("")
