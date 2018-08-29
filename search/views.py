@@ -40,21 +40,6 @@ def search_activities(request, format=None):
     except ValueError as error:
         return Response(str(error), status=status.HTTP_400_BAD_REQUEST)
 
-    # text_query_params = {key: params[key] for key in TEXT_QUERIES if params[key]}
-    # if not text_query_params:
-    #     message = "To run a search, include one or more text parameters to search for: "
-    #     message += ", ".join(TEXT_QUERIES)
-    #     return Response(message, status=status.HTTP_400_BAD_REQUEST)
-    # try
-    #     search = Search.objects.create(**params, type="activities")
-    #     acts = search.results()
-    #     pager, page = paginated(acts, request)
-    #     serializer = ActivitySerializer(page, many=True, bill_query=params["bill"])
-    #     return pager.get_paginated_response(serializer.data)
-    # except ValueError as error:
-    #     return Response(str(error), status=status.HTTP_400_BAD_REQUEST)
-
-
 # refactor this into something better.
 def paginated(queryset, request):
     paginator = PageNumberPagination()
