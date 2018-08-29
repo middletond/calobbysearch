@@ -9,3 +9,8 @@ VIRTUALENV_PYTHON=/var/www/lobbysearch/venv/bin/python3.5
 0 5 * * * $VIRTUALENV_PYTHON $PROJECT_DIR/manage.py loadlobbysearch
 # Check on daily and renew SSL cert via certbot
 0 0 * * * /usr/bin/certbot renew
+
+# Servers default to UTC.
+# Change to another timezone:
+# $ timedatectl list-timezones
+# $ timedatectl set-timezone America/Los_Angeles
