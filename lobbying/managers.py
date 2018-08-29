@@ -1,4 +1,5 @@
 from django.db import models
+from clint.textui import progress
 
 from bills import parser
 
@@ -77,17 +78,16 @@ class ActivityQuerySet(models.QuerySet):
                 connected_acts.extend(acts)
             return (connected_acts, connected_bills)
 
+        # acts = self.session(session).has_interests()[:100] # XXX TESTING ONLY
         acts = self.session(session).has_interests()
         act_count = acts.count()
 
         print("Connecting bills to {} acts for session {}".format(
             act_count, session))
 
-        for index, act in enumerate(acts, 1):
+        for act in progress.bar(list(acts)):
             bills = act.find_related_bills()
             if bills:
-                print("{}: Act {} of {}".format(session, index, act_count))
-                print("--- {} bills found.".format(bills.count()))
                 act.bills.add(*bills)
                 connected_bills.extend(bills)
                 connected_acts.append(act)

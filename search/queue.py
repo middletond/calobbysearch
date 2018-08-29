@@ -28,7 +28,7 @@ def fanout(taskname, iterable, block=True, **kwargs):
     enqueued = jobs.apply_async() # start the jobs
     if block:
         results = enqueued.get()
-        return flatten(results)
+        return results
     return job
 
 def fanout_by_session(taskname, sessions=None, **kwargs):
@@ -39,7 +39,11 @@ def fanout_by_session(taskname, sessions=None, **kwargs):
 
 
 def connect_to_bills(sessions=None):
-    return fanout_by_session("connect_to_bills", sessions)
+    connected = fanout_by_session("connect_to_bills", sessions)
+    return (
+        flatten(actids for actids, billids in connected),
+        flatten(billids for actids, billids in connected),
+    )
 
 def fetch_bills(sessions=None):
     return fanout_by_session("fetch_bills", sessions)

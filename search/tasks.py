@@ -3,6 +3,7 @@ from scrape import leginfo
 
 from lobbying.models import Activity
 
+
 @celery_app.task
 def connect_to_bills(session):
     acts, bills = Activity.objects.connect_to_bills(session)
