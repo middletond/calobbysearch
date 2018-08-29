@@ -28,7 +28,7 @@ def fanout(taskname, iterable, block=True, **kwargs):
     enqueued = jobs.apply_async() # start the jobs
     if block:
         results = enqueued.get()
-        return results
+        return flatten(results)
     return job
 
 def fanout_by_session(taskname, sessions=None, **kwargs):
