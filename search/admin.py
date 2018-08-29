@@ -6,14 +6,11 @@ class PopulationAttemptAdmin(admin.ModelAdmin):
     """Admin for load attempts."""
     list_display = (
         "began",
-        "updatecalaccess_began",
-        "updatecalaccess_finished",
-        "loadactivities_began",
-        "loadactivities_finished",
-        "loadbills_began",
-        "loadbills_finished",
-        "connectbills_began",
-        "connectbills_finished",
+        "took",
+        "updatecalaccess_took",
+        "loadactivities_took",
+        "loadbills_took",
+        "connectbills_took",
         "finished",
     )
 

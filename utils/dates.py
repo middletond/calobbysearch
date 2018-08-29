@@ -67,3 +67,27 @@ def next(timeunit, at):
         if occurance < now:
             occurance = occurance + timedelta(days=1)
     return occurance
+
+def humanize_delta(timedelta, decimal=None):
+    """Returns short human-readable string for a timedelta object."""
+    PER_MINUTE = 60
+    PER_HOUR = 3600
+    PER_DAY = 3600 * 24
+
+    seconds = timedelta.seconds
+    if seconds < PER_MINUTE:
+        unit = "second"
+        value = seconds
+    elif seconds > PER_MINUTE and seconds < PER_HOUR:
+        unit = "minute"
+        value = round(seconds / PER_MINUTE, decimal)
+    elif seconds > PER_HOUR and seconds < PER_DAY:
+        unit = "hour"
+        value = round(seconds / PER_HOUR, decimal)
+    else:
+        unit = "day"
+        value = round(timedelta.days, decimal)
+
+    if value != 1: unit += "s" # pluralize
+
+    return "{} {}".format(value, unit)
