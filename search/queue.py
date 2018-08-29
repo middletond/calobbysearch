@@ -6,7 +6,7 @@ from celery.app.control import Inspect
 from service import celery_app
 
 from utils.session import Session
-from utils.arrays import flatten
+from utils.arrays import flatten, unique
 
 from . import tasks
 
@@ -29,7 +29,7 @@ def fanout(taskname, iterable, block=True, **kwargs):
     if block:
         results = enqueued.get()
         return flatten(results)
-    return job
+    return enqueued
 
 def fanout_by_session(taskname, sessions=None, **kwargs):
     """Fanout a task by passed sessions."""
@@ -38,12 +38,14 @@ def fanout_by_session(taskname, sessions=None, **kwargs):
     return fanout(taskname, sessions, **kwargs)
 
 
-def connect_to_bills(sessions=None):
-    connected = fanout_by_session("connect_to_bills", sessions)
-    return (
-        flatten(actids for actids, billids in connected),
-        flatten(billids for actids, billids in connected),
-    )
-
 def fetch_bills(sessions=None):
     return fanout_by_session("fetch_bills", sessions)
+
+def connect_to_bills(sessions=None):
+    connected = fanout_by_session("connect_to_bills", sessions)
+    actids = flatten(connected[0::2]) # even indexes are acts
+    billids = flatten(connected[1::2]) # odd indexes are bills
+    return (
+        actids,
+        unique(billids),
+    )

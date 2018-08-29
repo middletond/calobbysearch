@@ -25,3 +25,9 @@ def chunks(array, chunk_size):
 	[[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     """
     return [array[i:i + chunk_size] for i in range(0, len(array), chunk_size)]
+
+def unique(array):
+    """
+    Returns a list of unique items. Mostly syntactic sugar.
+    """
+    return list(set(array))
