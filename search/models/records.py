@@ -133,7 +133,7 @@ class PopulationAttempt(models.Model):
         if self.succeeded == False:
             return "Failed"
 
-    def get_admin_url(self): # always just go to list view
+    def get_admin_list_url(self):
         return service_settings.CUR_HOST + "/admin/search/populationattempt/"
 
     def begin(self):
@@ -150,8 +150,8 @@ class PopulationAttempt(models.Model):
             self.notify(COMMAND_FINISHED)
 
     def notify(self, event):
-        headline = "Population attempt #{} has {}.".format(self.id, event)
-        url = self.get_admin_url()
+        headline = "Population attempt #{} just {}.".format(self.id, event)
+        url = self.get_admin_list_url()
         details = slack.attachment("details", {
             "Status": self.status,
             "Took": self.took(),

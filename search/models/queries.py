@@ -2,6 +2,10 @@ from django.db import models
 
 from lobbying.models import Activity
 from utils.session import Session
+from utils import slack
+from .. import settings
+
+from service import settings as service_settings
 
 class Search(models.Model):
     """A single search of lobby data.
@@ -68,6 +72,9 @@ class Search(models.Model):
     created = models.DateTimeField(
         auto_now_add=True,
     )
+    result_count = models.IntegerField(
+        null=True
+    )
 
     class Meta:
         ordering = ("-created",)
@@ -85,9 +92,12 @@ class Search(models.Model):
 
     def results(self):
         params = self.params
-        if self.type == "activities":
-            return Search.activities(**params)
-        return []
+        res = Search.activities(**params)
+        self.result_count = len(res)
+        self.save()
+        if settings.NOTIFY_ON_NEW_SEARCH:
+            self.notify()
+        return res
 
     @staticmethod
     def activities(interest=None, company=None, bill=None,
@@ -114,3 +124,21 @@ class Search(models.Model):
     def registrations(self, interest=None, company=None, bill=None,
                       start=None, end=None, session=None, latest_only=True):
         return [] # for future etc
+
+    def get_admin_list_url(self):
+        return service_settings.CUR_HOST + "/admin/search/search/"
+
+    def notify(self):
+        headline = "A new search has been run."
+        url = self.get_admin_list_url()
+        details = slack.attachment("details", {
+            "Company": self.company,
+            "Interest": self.interest,
+            "Bill": self.bill,
+            "Start Date": self.start,
+            "End Date": self.end,
+            "Session": self.session,
+            "Amendments": "Latest Only" if self.latest_only else "All",
+            "Result Count": self.result_count,
+        }, url=url)
+        return slack.message(headline, details)
