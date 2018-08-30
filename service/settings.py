@@ -136,12 +136,16 @@ STATIC_URL = "/static/"
 
 CORS_ORIGIN_ALLOW_ALL = True # connections from anywhere
 
-# Celery / Redis Queue
+# Job Queue (Celery / Redis)
 
 REDIS_PORT = 6379
 
 CELERY_BROKER_URL = "redis://localhost:{}".format(REDIS_PORT)
 CELERY_RESULT_BACKEND = "redis://localhost:{}".format(REDIS_PORT)
+
+# Notifications (Slack)
+
+SLACK_URL = "https://hooks.slack.com/services/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"
 
 try:
     from .local_settings import *
