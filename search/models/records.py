@@ -1,8 +1,12 @@
 from django.db import models
 from django.utils import timezone
+from django.urls import reverse
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
-from utils import dates
+from utils import dates, slack
+from .. import settings
+
+from service import settings as service_settings
 
 COMMAND_BEGAN = "began"
 COMMAND_FINISHED = "finished"
@@ -116,25 +120,56 @@ class PopulationAttempt(models.Model):
         verbose_name="Acts Connected",
         help_text="Count of acts connected."
     )
-
-
     class Meta:
         ordering = ("-began", "-finished",)
         get_latest_by = "began"
 
+    @property
+    def status(self):
+        if self.succeeded == None:
+            return "In-progress"
+        if self.succeeded == True:
+            return "Succeeded"
+        if self.succeeded == False:
+            return "Failed"
+
+    def get_admin_url(self): # always just go to list view
+        return service_settings.CUR_HOST + "/admin/search/populationattempt/"
+
     def begin(self):
         self.began = timezone.now()
         self.save()
+        if settings.NOTIFY_ON_POPULATION_BEGIN:
+            self.notify(COMMAND_BEGAN)
 
-    def finish(self, notify=False):
+    def finish(self):
         self.finished = timezone.now()
         self.succeeded = True
         self.save()
-        if notify:
-            self.notify()
+        if settings.NOTIFY_ON_POPULATION_FINISH:
+            self.notify(COMMAND_FINISHED)
 
-    def notify(self):
-        print("Send my stats to stakeholders!")
+    def notify(self, event):
+        headline = "Population attempt #{} has {}.".format(self.id, event)
+        url = self.get_admin_url()
+        details = slack.attachment("details", {
+            "Status": self.status,
+            "Took": self.took(),
+            "Began At": self.began,
+            "Finished At": self.finished,
+            "Updating Calaccess Took": self.updatecalaccess_took(),
+            "Loading Activities Took": self.loadactivities_took(),
+            "Loading Bills Took": self.loadbills_took(),
+            "Connecting Bills Took": self.connectbills_took(),
+            "Failures": self.reason,
+        }, url=url)
+        stats = slack.attachment("stats", {
+            "Activities Loaded": self.loadactivities_count,
+            "Bills Loaded": self.loadbills_count,
+            "Activities Connected": self.connectedacts_count,
+            "Bills Connected": self.connectedbills_count,
+        }, url=url)
+        return slack.message(headline, [details, stats])
 
     def log(self, command, event, outcome=None):
         if event == COMMAND_BEGAN:

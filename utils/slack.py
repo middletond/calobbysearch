@@ -1,72 +1,41 @@
 import requests
+from datetime import datetime
+
 from service import settings
+
+DATETIME_FORMAT = "%b. %-d, %Y, %-I:%M%p"
+USE_SHORT_FIELDS = True
 
 def message(text, attachments=None):
     """Send a message to slack using app settings."""
     if not isinstance(attachments, (list, tuple)):
         attachments = [attachments]
 
-    response = requests.post(
-        url=settings.SLACK_URL,
-        json={
-            "text": text,
-            "attachments": attachments,
-        }
-    )
+    response = requests.post(settings.SLACK_URL, json={
+        "text": text,
+        "attachments": attachments,
+    })
     if response.status_code != 200:
         reason = "{} {}".format(response.status_code, response.text)
         raise requests.HTTPError(reason)
     return response
 
-def attachment(title, data, url=None, short_fields=True):
+def attachment(title, data, url=None):
     """Creates a slack attachment from key-value data."""
-    def to_attachment_field(key, val):
+    def empty(value):
+        return value is None or value is ""
+
+    def to_attachment_field(key, value):
+        if isinstance(value, datetime):
+            value = value.strftime(DATETIME_FORMAT)
         return {
             "title": key.capitalize(),
-            "value": "High",
-            "short": short_fields,
+            "value": value,
+            "short": USE_SHORT_FIELDS,
         }
     return {
         "fallback": title,
         "title": title.capitalize(),
         "title_link": url,
-        "fields": [to_attachment_field(key, val) for key, val in data.items()]
+        "fields": [to_attachment_field(key, val) for key, val in data.items() if not empty(val)]
     }
-
-# {
-# 	"text": "Testing headline",
-#     "attachments": [
-#         {
-#             "fallback": "Required plain-text summary of the attachment.",
-#             "color": "#36a64f",
-#             "author_name": "Bobby Tables",
-#             "author_link": "http://flickr.com/bobby/",
-#             "author_icon": "http://flickr.com/icons/bobby.jpg",
-#             "title": "Slack API Documentation",
-#             "title_link": "https://api.slack.com/",
-#             "text": "Optional text that appears within the attachment",
-#             "fields": [
-#                 {
-#                     "title": "Priority",
-#                     "value": "High",
-#                     "short": true
-#                 },
-# 				 {
-#                     "title": "Test",
-#                     "value": "High",
-#                     "short": true
-#                 },
-# 				{
-#                     "title": "Test",
-#                     "value": "High",
-#                     "short": true
-#                 }
-#             ],
-#             "image_url": "http://my-website.com/path/to/image.jpg",
-#             "thumb_url": "http://example.com/path/to/thumb.png",
-#             "footer": "Slack API",
-#             "footer_icon": "https://platform.slack-edge.com/img/default_application_icon.png",
-#             "ts": 123456789
-#         }
-#     ]
-# }
