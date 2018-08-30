@@ -78,8 +78,8 @@ class ActivityQuerySet(models.QuerySet):
                 connected_acts.extend(acts)
             return (connected_acts, connected_bills)
 
-        acts = self.session(session).has_interests()[:100] # XXX TESTING ONLY
-        # acts = self.session(session).has_interests()
+        # acts = self.session(session).has_interests()[:100] # XXX TESTING ONLY
+        acts = self.session(session).has_interests()
         act_count = acts.count()
 
         print("Connecting bills to {} acts for session {}".format(

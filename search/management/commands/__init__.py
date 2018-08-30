@@ -19,14 +19,16 @@ class LobbySearchCommand(BaseCommand):
 
     def outcome_to_string(self, outcome):
         """Django only allows commands to output as strings."""
-        if not outcome: # django ignores outcomes that resolve to false
-            return outcome
+        if not outcome: return outcome # django ignores outcomes that resolve to false
+
         if isinstance(outcome, (tuple, list)):
             return OUTCOME_DELIMITER.join(str(val) for val in outcome)
         return str(outcome)
 
     def outcome_from_string(self, string):
         """And back again."""
+        if not string: return string
+
         if OUTCOME_DELIMITER in string:
             return tuple(string.split())
         return int(string)
