@@ -41,7 +41,7 @@ class Command(LobbySearchCommand):
 
         self.output("Loading complete. Ready for searching!")
 
-        self.attempt.finish(notify=True)
+        self.attempt.finish()
 
     def call_subcommand(self, command, *args, **kwargs):
         try:
