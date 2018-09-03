@@ -1,7 +1,7 @@
 import requests
 from datetime import datetime
 
-from service import settings
+from service import settings as service_settings
 
 DATETIME_FORMAT = "%b. %-d, %Y, %-I:%M%p"
 USE_SHORT_FIELDS = True
@@ -11,7 +11,7 @@ def message(text, attachments=None):
     if not isinstance(attachments, (list, tuple)):
         attachments = [attachments]
 
-    response = requests.post(settings.SLACK_URL, json={
+    response = requests.post(service_settings.SLACK_URL, json={
         "text": text,
         "attachments": attachments,
     })

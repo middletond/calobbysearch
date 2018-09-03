@@ -1,9 +1,9 @@
 from django.db import models
 
 from lobbying.models import Activity
+from .. import report, settings
 from utils.session import Session
 from utils import slack
-from .. import settings
 
 from service import settings as service_settings
 
@@ -95,8 +95,8 @@ class Search(models.Model):
         res = Search.activities(**params)
         self.result_count = len(res)
         self.save()
-        if settings.NOTIFY_ON_NEW_SEARCH:
-            self.notify()
+        if settings.REPORT_SEARCH_RAN:
+            report.search_ran(self)
         return res
 
     @staticmethod
@@ -127,18 +127,3 @@ class Search(models.Model):
 
     def get_admin_list_url(self):
         return service_settings.CUR_HOST + "/admin/search/search/"
-
-    def notify(self):
-        headline = "A new search has been run."
-        url = self.get_admin_list_url()
-        details = slack.attachment("details", {
-            "Company": self.company,
-            "Interest": self.interest,
-            "Bill": self.bill,
-            "Start Date": self.start,
-            "End Date": self.end,
-            "Session": self.session,
-            "Amendments": "Latest Only" if self.latest_only else "All",
-            "Result Count": self.result_count,
-        }, url=url)
-        return slack.message(headline, details)
