@@ -23,12 +23,16 @@ touch setup.log
 echo "Updating packages."
 sudo apt-get update >> setup.log
 
-echo "Installing python3 and deps."
-sudo apt-get install -y python3-dev python3-setuptools python3-pip libpq-dev build-essential >> setup.log
+echo "Adding PPA for python3.6."
+sudo add-apt-repository ppa:deadsnakes/ppa >> setup.log
+sudo apt-get update >> setup.log
 
-echo "Installing virtualenv."
+echo "Installing python3.6 and deps."
+sudo apt-get install -y python3-dev python3.6-dev python3.6-venv python3-setuptools python3-pip libpq-dev build-essential >> setup.log
+
+echo "Installing virtualenv with python3.6."
 sudo apt-get install -y virtualenv >> setup.log
-sudo virtualenv $VIRTUALENV_NAME --python=python3 >> setup.log
+sudo virtualenv $VIRTUALENV_NAME --python=python3.6 >> setup.log
 
 echo "Installing nginx."
 sudo apt-get install -y nginx >> setup.log
