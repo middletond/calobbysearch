@@ -52,22 +52,6 @@ def inclusive_range(start, end=None):
                                              second=0, microsecond=0))
 
 
-def next(timeunit, at):
-    """Returns the time the clock will next strike `at` for a given time unit."""
-    at = str(at)
-    now = timezone.now()
-    occurance = now.replace(second=0, microsecond=0)
-    if timeunit == "hour":
-        occurance = occurance.replace(minute=int(at))
-        if occurance < now:
-            occurance = occurance + timedelta(hours=1)
-    if timeunit == "day":
-        hour, minute = at[:2], at[2:]
-        occurance = occurance.replace(hour=int(hour), minute=int(minute))
-        if occurance < now:
-            occurance = occurance + timedelta(days=1)
-    return occurance
-
 def humanize_delta(timedelta, decimal=None):
     """Returns short human-readable string for a timedelta object."""
     PER_MINUTE = 60
@@ -78,10 +62,10 @@ def humanize_delta(timedelta, decimal=None):
     if seconds < PER_MINUTE:
         unit = "second"
         value = seconds
-    elif seconds > PER_MINUTE and seconds < PER_HOUR:
+    elif seconds >= PER_MINUTE and seconds < PER_HOUR:
         unit = "minute"
         value = round(seconds / PER_MINUTE, decimal)
-    elif seconds > PER_HOUR and seconds < PER_DAY:
+    elif seconds >= PER_HOUR and seconds < PER_DAY:
         unit = "hour"
         value = round(seconds / PER_HOUR, decimal)
     else:

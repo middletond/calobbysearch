@@ -1,4 +1,4 @@
-"""Base scraping utils."""
+"""HTML and XML scraping utils."""
 import requests
 import re
 
@@ -46,12 +46,12 @@ def value(page, xpath):
 
 
 def values(page, base_xpath, xpaths=None):
-    """Scrapes a dictionary of name:values.
+    """Scrapes a dictionary of names:values.
 
     >>> record = scrape.values(page, '//div[@id="info"]', {
     ...    'name': 'div[@class="name"]/text()',
     ...    'address': 'div[@class="address"]/a/text()',
-    ...    'url': 'div[@class="url"]/a/@href',
+    ...    'url': 'div[@class="address"]/a/@href',
     ... })
     """
     tree = element_tree(page)
