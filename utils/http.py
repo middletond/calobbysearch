@@ -1,7 +1,6 @@
 import requests
 
-from .. import scrape
-
+from . import scrape
 
 class Session(object):
     """Wrapper class to add browser-like behavior / interface to requests.Session.
@@ -42,9 +41,9 @@ class Session(object):
         self._response = response
         if response.text:
             if "html" in response.headers.get("content-type", ""):
-                self.tree = scrape.tree_from_page(self.response, "html")
+                self.tree = scrape.element_tree(self.response, "html")
             elif "xml" in response.headers.get("content-type", ""):
-                self.tree = scrape.tree_from_page(self.response, "xml")
+                self.tree = scrape.element_tree(self.response, "xml")
             else:
                 self.tree = None
 

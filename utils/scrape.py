@@ -1,3 +1,4 @@
+"""Base scraping utils."""
 import requests
 import re
 
@@ -7,15 +8,18 @@ from lxml import etree, html
 XML_NAMESPACE_ATTRS = r'xmlns\=\"[^\"]+\"|xmlns\:[a-z]+\=\"[^\"]+\"|(?<=\s)[a-z]+\:'
 
 
-def tree_from_page(page, tree_type=None):
-    """Convert an HTML or XML page into a parsed tree."""
+def element_tree(page, tree_type=None):
+    """Convert an HTML or XML page into a parsed tree of elements."""
+    # Do nothing.
+    if hasattr(page, "xpath"):
+        return page
     if hasattr(page, "tree"):
         return page.tree
-    else:
-        if hasattr(page, "page_source"): # browser object
-            page = page.page_source
-        if isinstance(page, requests.models.Response): # requests object
-            page = page.content
+    # If page is not a string, convert it
+    if hasattr(page, "page_source"):
+        page = page.page_source
+    if isinstance(page, requests.models.Response):
+        page = page.content
 
     if not tree_type:
         html_elems = html.fromstring(page).find('.//*')
@@ -30,72 +34,50 @@ def tree_from_page(page, tree_type=None):
     raise TypeError("Tree type must be set as either html or xml!")
 
 
+def value(page, xpath):
+    """Scrapes a single value from the page.
+
+    >>> title = scrape.value(page, '/head/title/text()')
+    """
+    tree = element_tree(page)
+
+    elems = tree.xpath(xpath)
+    return value_from_elements(elems)
+
+
+def values(page, base_xpath, xpaths=None):
+    """Scrapes a dictionary of name:values.
+
+    >>> record = scrape.values(page, '//div[@id="info"]', {
+    ...    'name': 'div[@class="name"]/text()',
+    ...    'address': 'div[@class="address"]/a/text()',
+    ...    'url': 'div[@class="url"]/a/@href',
+    ... })
+    """
+    tree = element_tree(page)
+
+    if not xpaths: # allow for no `base_xpath` arg
+        xpaths, base_xpath = base_xpath, xpaths
+
+    if base_xpath:
+        base_elems = tree.xpath(base_xpath)
+        if not base_elems:
+            return {}
+        tree = base_elems[0]
+    return { name: value(tree, xpath) for name, xpath in xpaths.items() }
+
+
 def rows(page, xpath, column_xpaths):
     """Scrapes rows of data, such as off of a table.
 
-    >>> records = scrape.rows(browser, '//table[1]/tbody/tr', {
+    >>> records = scrape.rows(page, '//table[1]/tbody/tr', {
     ...    'table_column_1': 'td[1]/text()',
     ...    'table_column_2': 'td[2]/a/text()',
     ...    'table_column_2_link': 'td[2]/a/@href',
     ... })
-
-    Args:
-        xpath (str): The xpath that matches each record.
-        column_xpaths (dict): The dictionary of xpaths for each record.
     """
-    tree = tree_from_page(page)
-
-    records = []
-    for row in tree.xpath(xpath):
-        record = {}
-        for column_name in column_xpaths.keys():
-            value_elements = row.xpath(column_xpaths[column_name])
-            record[column_name] = value_from_elements(value_elements)
-        records.append(record)
-    return records
-
-
-def values(page, base_xpath, xpaths=None):
-    """Scrapes a dictionary of values.
-
-    xpaths (dict): The dictionary of xpaths. This is used in the same way that
-        :func:`.rows` uses it, except it's only used once.
-    base_xpath (str): An optional xpath whose corresponding element is used as a
-        base for the xpaths in the dictionary.
-    """
-    if xpaths is None:
-        xpaths, base_xpath = base_xpath, xpaths
-
-    tree = tree_from_page(page)
-    if base_xpath is not None:
-        base = tree.xpath(base_xpath)
-        if not base:
-            return {} # no base matches so no values either
-        else:
-            base = base[0]
-    else:
-        base = tree
-
-    value_dict = {}
-    for name, xpath in xpaths.items():
-        value_dict[name] = value_from_elements(base.xpath(xpath))
-    return value_dict
-
-
-def value(page, xpath):
-    """Scrapes a single value from the page.
-
-    >>> title = scrape.value(browser, '/head/title/text()')
-    """
-    tree = tree_from_page(page)
-
-    value_elements = tree.xpath(xpath)
-    return value_from_elements(value_elements)
-
-
-def form_values(page, fieldnames):
-    """Scrape form values from a page by field name."""
-    return {name: value(page, '//input[@name="{}"]/@value'.format(name)) for name in fieldnames}
+    tree = element_tree(page)
+    return [values(row, column_xpaths) for row in tree.xpath(xpath)]
 
 
 def value_from_elements(elems):
@@ -103,8 +85,7 @@ def value_from_elements(elems):
     def to_value(elem):
         if isinstance(elem, str):
             return str(elem).strip()
-        else:
-            return ''.join(elem.itertext())
+        return u''.join(elem.itertext())
 
     if len(elems) == 1:
         return to_value(elems[0])
