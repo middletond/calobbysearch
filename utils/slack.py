@@ -1,3 +1,4 @@
+import pytz
 import requests
 from datetime import datetime
 
@@ -5,6 +6,8 @@ from service import settings as service_settings
 
 DATETIME_FORMAT = "%b. %-d, %Y, %-I:%M%p"
 USE_SHORT_FIELDS = True
+
+tz = pytz.timezone(service_settings.TIME_ZONE)
 
 def message(text, attachments=None):
     """Send a message to slack using app settings."""
@@ -27,7 +30,7 @@ def attachment(title, data, url=None):
 
     def to_attachment_field(key, value):
         if isinstance(value, datetime):
-            value = value.strftime(DATETIME_FORMAT)
+            value = value.astimezone(tz).strftime(DATETIME_FORMAT)
         return {
             "title": key.capitalize(),
             "value": value,
