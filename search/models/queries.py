@@ -108,7 +108,7 @@ class Search(models.Model):
         elif session: # session takes precedence over start / end
             start, end = Session(session).as_dates();
         # filter down by date ranges
-        acts = Activity.objects.dates(start, end)
+        acts = Activity.objects.between(start, end)
         # filter down by text queries
         if interest:
             acts = acts.with_interest(interest)

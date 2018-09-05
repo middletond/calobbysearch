@@ -1,13 +1,10 @@
 from django.db import models
 from clint.textui import progress
 
-from bills import parser
+from bills import parser as bill_parser
 
 from utils.session import Session
 from utils import dates
-
-DEFAULT_SEARCH_TYPE = "interests"
-DEFAULT_DATE_FIELD = "start_date"
 
 class ActivityQuerySet(models.QuerySet):
     """Queryset for `Activity` model."""
@@ -19,11 +16,11 @@ class ActivityQuerySet(models.QuerySet):
         return self.filter(involved_entities__icontains=query)
 
     def with_bill(self, query):
-        bill_names = parser.parse(query)
-        if bill_names: # there are names, so search by that
+        bill_names = bill_parser.parse(query)
+        if bill_names: # there are bill names, so search by that
             return self.filter(bills__name__in=bill_names)
         # else assume text / keyword query and search full names
-        return self.filter(bills__full_name__iregex="\y{}\y".format(query))
+        return self.filter(bills__full_name__iregex="\y{}\y".format(query)) # XXX full text search here please?
 
     def has_interests(self):
         return self.exclude(interests="")
@@ -31,39 +28,26 @@ class ActivityQuerySet(models.QuerySet):
     def has_bills(self):
         return self.filter(bills__isnull=False)
 
-    def dates(self, start=None, end=None):
+    def between(self, start=None, end=None, field=None):
         if not start:
             start = dates.BEGINNING_OF_TIME
         if not end:
             end = dates.today()
-        return self.between(start, end)
+        # results should include any activity range 
+        # that touches the start - end dates.
+        # ex: 1/03/18 - 3/20/18 should return matches w dates 1/1/18 - 3/31/18
+        return self.filter(
+            end_date__gte=dates.parse(start),
+            start_date__lte=dates.parse(end),
+        )
+
+    def session(self, session):
+        return self.between(*Session(session).as_dates())
 
     def latest_only(self):
         UNIQUE_ACT_FIELDS = ("filing_id", "employer_name", "lobbyer_name", "type",)
         return self.order_by(*UNIQUE_ACT_FIELDS, "-amendment_id") \
                    .distinct(*UNIQUE_ACT_FIELDS)
-
-    def session(self, session):
-        return self.between(*Session(session).as_dates())
-
-    # Dates and Times
-    def between(self, start, end, field=None):
-        if not field:
-            field = DEFAULT_DATE_FIELD
-        return self.filter(**{field + "__range": dates.inclusive_range(start, end)})
-
-    def before(self, end, field=None):
-        return self.between(dates.BEGINNING_OF_TIME, end, field)
-
-    def after(self, start, field=None):
-        return self.between(start, dates.today(), field)
-
-    def date(self, date, field=None): # pass in a timestamp and get the whole day. can be date, datetime, string, obj, etc
-        return self.between(date, date, field)
-
-    def today(self, field=None):
-        today = dates.today()
-        return self.date(today, field)
 
     # Loading methods
     def connect_to_bills(self, session=None):
