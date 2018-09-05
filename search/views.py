@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.shortcuts import redirect
 
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -8,6 +9,12 @@ from rest_framework.pagination import PageNumberPagination
 from lobbying.models import Activity
 from lobbying.serializers import ActivitySerializer
 from .models import Search
+from .settings import DEFAULT_SEARCH_VIEW
+
+
+def redirect_to_default_search(requests):
+    return redirect(DEFAULT_SEARCH_VIEW)
+
 
 @api_view(["GET"])
 def search_activities(request, format=None):
