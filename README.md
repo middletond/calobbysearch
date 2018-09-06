@@ -1,22 +1,9 @@
 # California Lobby Search by Bill
 A public data search API that connects bills with lobbying activities in the California state legislature.
 
-## But Why?
+The what, why, and how is covered on [the about page](https://calobbysearch.org/about).
 
-Every three months, lobbying activity is filed by both lobbyers (Form 625) and employers (Form 635). In the original filings, the entity data gets stored in different fields depending on which of these is filing. For example, when an employer files, the employer's address ends up under the fields meant for the hired lobby firm!
-
-The purpose of this app is to:
-
-1. connect basic filer information with the meaningful activity fields (payments, dates, employer interests), which in their original form exist in balkanized tables in the CAL-ACCESS data.
-2. normalize these fields so they are always consistent and intuitive, regardless of who the original filer was.
-
-By doing this, it can provide this basic picture of lobby activity:
-
-employer ->
-paid amount ->
-to lobbyer ->
-to influence interests / bills ->
-during these dates
+This is the backend of the app. There is also a [frontend](https://github.com/middletond/calobbysearch-frontend), which can be [tried out here](https://calobbysearch.org).
 
 ## Installation
 Installation has been tested on Ubuntu 16.04. To install, do the following:
@@ -33,10 +20,10 @@ To restart the app:
 
 `$ bash deploy/restart.sh`
 
-## Loading the Data
+## Adding the Data
 To load and connect the public data utilized by the app, run:
 
-`$ python manage.py loadlobbysearch`
+`$ python manage.py populate`
 
 This will do the following:
 
