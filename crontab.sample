@@ -1,7 +1,7 @@
 # To deploy, invoke `crontab -e` and copy commands below into the opened cron file.
 # Change the PROJECT_DIR path as needed.
 PROJECT_DIR=/var/www/lobbysearch
-VIRTUALENV_PYTHON=/var/www/lobbysearch/venv/bin/python3.5
+VIRTUALENV_PYTHON=/var/www/lobbysearch/venv/bin/python3.6
 
 # m h  dom mon dow   command
 
