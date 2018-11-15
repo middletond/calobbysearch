@@ -11,8 +11,9 @@ from service import settings
 class ActivityQuerySet(models.QuerySet):
     """Queryset for `Activity` model."""
 
-    def with_interest(self, query):
-        return self.filter(interests__icontains=query)
+    def with_interest(self, query): # search interest field + bill full names
+        # return self.filter(involved_keywords__iregex="\y{}\y".format(query))
+        return self.filter(involved_keywords__search=query)
 
     def with_company(self, query):
         return self.filter(involved_entities__icontains=query)
@@ -21,8 +22,8 @@ class ActivityQuerySet(models.QuerySet):
         bill_names = bill_parser.parse(query)
         if bill_names: # there are bill names, so search by that
             return self.filter(bills__name__in=bill_names)
-        # else assume text / keyword query and search full names
-        return self.filter(bills__full_name__iregex="\y{}\y".format(query)) # XXX full text search here please?
+        # else assume text / keyword query
+        return self.with_interest(query)
 
     def has_interests(self):
         return self.exclude(interests="")
