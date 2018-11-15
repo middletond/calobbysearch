@@ -264,6 +264,11 @@ class Activity(models.Model):
         null=True,
         db_column="involved_entities"
     )
+    involved_keywords = models.TextField(
+        blank=True,
+        null=True,
+        db_column="involved_keywords"
+    )
     objects = ActivityQuerySet.as_manager()
 
     class Meta:
@@ -326,6 +331,14 @@ class Activity(models.Model):
             session=self.session,
             name__in=bill_names,
         )
+
+    def populate_keywords(self, bills=[]):
+        """Add bill names:titles plus raw interest text to `involved_keywords`."""
+        self.involved_keywords = "{interests} {bill_titles}".format(
+            interests=self.interests,
+            bill_titles=", ".join(bill.full_name for bill in bills),
+        ).strip()
+        self.save()
 
     def source_link(self):
         return mark_safe(

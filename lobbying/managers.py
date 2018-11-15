@@ -6,6 +6,8 @@ from bills import parser as bill_parser
 from utils.session import Session
 from utils import dates
 
+from service import settings
+
 class ActivityQuerySet(models.QuerySet):
     """Queryset for `Activity` model."""
 
@@ -33,7 +35,7 @@ class ActivityQuerySet(models.QuerySet):
             start = dates.BEGINNING_OF_TIME
         if not end:
             end = dates.today()
-        # results should include any activity range 
+        # results should include any activity range
         # that touches the start - end dates.
         # ex: 1/03/18 - 3/20/18 should return matches w dates 1/1/18 - 3/31/18
         return self.filter(
@@ -62,8 +64,10 @@ class ActivityQuerySet(models.QuerySet):
                 connected_acts.extend(acts)
             return (connected_acts, connected_bills)
 
-        # acts = self.session(session).has_interests()[:100] # XXX TESTING ONLY
-        acts = self.session(session).has_interests()
+        if settings.CONNECT_BILLS_DEBUG:
+            acts = self.session(session).has_interests()[:settings.CONNECT_BILLS_DEBUG_LENGTH]
+        else:
+            acts = self.session(session).has_interests()
         act_count = acts.count()
 
         print("Connecting bills to {} acts for session {}".format(
@@ -72,7 +76,11 @@ class ActivityQuerySet(models.QuerySet):
         for act in progress.bar(list(acts)):
             bills = act.find_related_bills()
             if bills:
+                # create M2M connections
                 act.bills.add(*bills)
+                # populate `involved_keywords` text field
+                # with bill titles + act interests
+                act.populate_keywords(bills)
                 connected_bills.extend(bills)
                 connected_acts.append(act)
         return (connected_acts, connected_bills)

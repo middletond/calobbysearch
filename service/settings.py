@@ -22,9 +22,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "**6_wor3@ptf@0n0sr)a2)d2i2$ugo9v-ggbbw0^jm1m=pyim="
 
-# SECURITY WARNING: don"t run with debug turned on in production!
-DEBUG = True
-
 ALLOWED_HOSTS = []
 
 # Application definition
@@ -145,6 +142,15 @@ CELERY_RESULT_BACKEND = "redis://localhost:{}".format(REDIS_PORT)
 # Notifications (Slack)
 
 SLACK_URL = "https://hooks.slack.com/services/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"
+
+# Testing / Debugging
+
+DEBUG = True
+
+# Only connect a small number of bills to allow fast testing / iteration.
+CONNECT_BILLS_DEBUG = False
+# Number of connections during debug.
+CONNECT_BILLS_DEBUG_LENGTH = 100
 
 try:
     from .local_settings import *
