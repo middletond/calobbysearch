@@ -16,7 +16,7 @@ class ActivityQuerySet(models.QuerySet):
         return self.filter(involved_keywords__search=query)
 
     def with_company(self, query):
-        return self.filter(involved_entities__icontains=query)
+        return self.filter(involved_entities__search=query)
 
     def with_bill(self, query):
         bill_names = bill_parser.parse(query)
