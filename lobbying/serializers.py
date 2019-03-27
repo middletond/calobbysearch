@@ -14,6 +14,7 @@ class ActivitySerializer(serializers.ModelSerializer):
             "amendment_id",
             "transaction_id",
             "filing_url",
+            "filed_by",
             "form_type",
             "entity_code",
             "filing_date",
